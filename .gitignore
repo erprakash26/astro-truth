@@ -6,6 +6,7 @@ __pycache__/
 *.egg-info/
 .mypy_cache/
 .ruff_cache/
+backend/app/data/charts.db
 
 # Node / frontend
 frontend/node_modules/
