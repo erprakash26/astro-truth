@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pyswisseph
+nepali-datetime
+anthropic
+pydantic
+pytest
+httpx
