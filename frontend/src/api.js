@@ -20,3 +20,75 @@ export async function createChart({ calendar, date, time, cityId }) {
   }
   return res.json()
 }
+
+export async function getConfig() {
+  const res = await fetch(new URL('/api/config', BASE_URL))
+  if (!res.ok) throw new Error(`Failed to load config: ${res.status}`)
+  return res.json()
+}
+
+// Consumes the /api/interpret SSE stream. Server sends either bare
+// `data: {...}` chunks (event type defaults to "message") or a named
+// `event: error` / `event: done` block. Buffers partial reads across the
+// `\n\n` event delimiter since fetch chunks don't align with SSE events.
+export async function streamInterpretation({ shareId, language, onChunk, onDone, onError, signal }) {
+  let res
+  try {
+    res = await fetch(new URL('/api/interpret', BASE_URL), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ share_id: shareId, language }),
+      signal,
+    })
+  } catch (err) {
+    onError(err)
+    return
+  }
+
+  if (!res.ok || !res.body) {
+    onError(new Error(`Interpretation request failed: ${res.status}`))
+    return
+  }
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+
+      let sepIndex
+      while ((sepIndex = buffer.indexOf('\n\n')) !== -1) {
+        const rawEvent = buffer.slice(0, sepIndex)
+        buffer = buffer.slice(sepIndex + 2)
+
+        let eventType = 'message'
+        let dataLine = ''
+        for (const line of rawEvent.split('\n')) {
+          if (line.startsWith('event:')) eventType = line.slice(6).trim()
+          else if (line.startsWith('data:')) dataLine = line.slice(5).trim()
+        }
+        if (!dataLine) continue
+        const payload = JSON.parse(dataLine)
+
+        if (eventType === 'error') {
+          onError(new Error(payload.message || 'Interpretation failed'))
+          return
+        }
+        if (eventType === 'done') {
+          onDone()
+          return
+        }
+        onChunk(payload.text ?? '')
+      }
+    }
+  } catch (err) {
+    onError(err)
+    return
+  }
+
+  onDone()
+}

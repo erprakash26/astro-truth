@@ -41,6 +41,10 @@ const DICT = {
     errorCity: 'Please choose a city from the list.',
     errorGeneric: 'Something went wrong. Please try again.',
     noCityResults: 'No matching cities',
+    interpret: 'Interpret my chart',
+    interpreting: 'Interpreting…',
+    mockBadge: 'mock',
+    interpretError: 'Could not generate an interpretation. Please try again.',
   },
   ne: {
     appName: 'AstroTruth',
@@ -79,6 +83,10 @@ const DICT = {
     errorCity: 'कृपया सूचीबाट शहर छान्नुहोस्।',
     errorGeneric: 'केही समस्या भयो। फेरि प्रयास गर्नुहोस्।',
     noCityResults: 'कुनै शहर फेला परेन',
+    interpret: 'मेरो कुण्डली व्याख्या गर्नुहोस्',
+    interpreting: 'व्याख्या गर्दै…',
+    mockBadge: 'नमूना',
+    interpretError: 'व्याख्या तयार गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
   },
 }
 

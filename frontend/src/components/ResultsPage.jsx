@@ -1,10 +1,11 @@
 import KundaliChart from './KundaliChart'
 import PlanetTable from './PlanetTable'
 import DashaTimeline from './DashaTimeline'
+import InterpretationPanel from './InterpretationPanel'
 import { t, SIGN_NAMES } from '../i18n'
 
 export default function ResultsPage({ lang, result, onReset }) {
-  const { chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha } = result
+  const { share_id: shareId, chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha } = result
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
@@ -40,6 +41,10 @@ export default function ResultsPage({ lang, result, onReset }) {
 
       <section>
         <DashaTimeline lang={lang} dashaTimeline={dashaTimeline} currentDasha={currentDasha} />
+      </section>
+
+      <section>
+        <InterpretationPanel lang={lang} shareId={shareId} />
       </section>
     </div>
   )

@@ -1,16 +1,22 @@
+import json
 from datetime import date as date_cls
 from datetime import datetime, timezone
 from datetime import time as time_cls
 from typing import Literal
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+
+load_dotenv()
 
 from app.calendar import CalendarError, bs_to_ad
 from app.dasha import current_dasha, vimshottari
 from app.engine import compute_chart, local_time_to_utc
 from app.geocode import City, get_city, search_cities
+from app.interpret import interpret_chart, is_mock_mode
 from app.storage import load_chart, new_share_id, save_chart
 
 app = FastAPI(title="AstroTruth API")
@@ -94,3 +100,43 @@ def get_chart(share_id: str) -> dict:
     if chart is None:
         raise HTTPException(status_code=404, detail="Chart not found")
     return chart
+
+
+@app.get("/api/config")
+def get_config() -> dict:
+    return {"mock_llm": is_mock_mode()}
+
+
+class InterpretRequest(BaseModel):
+    share_id: str
+    language: str = "en"
+
+
+def _sse_event(event: str | None, data: dict) -> str:
+    prefix = f"event: {event}\n" if event else ""
+    return f"{prefix}data: {json.dumps(data)}\n\n"
+
+
+def _interpret_sse(share_id: str, language: str):
+    stored = load_chart(share_id)
+    if stored is None:
+        yield _sse_event("error", {"message": f"Chart not found: {share_id}"})
+        return
+
+    try:
+        for chunk in interpret_chart(stored, language):
+            yield _sse_event(None, {"text": chunk})
+    except Exception as exc:  # surfaced to the client as a readable message
+        yield _sse_event("error", {"message": str(exc)})
+        return
+
+    yield _sse_event("done", {})
+
+
+@app.post("/api/interpret")
+def create_interpretation(payload: InterpretRequest) -> StreamingResponse:
+    return StreamingResponse(
+        _interpret_sse(payload.share_id, payload.language),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )

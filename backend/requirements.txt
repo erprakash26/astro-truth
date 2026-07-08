@@ -3,6 +3,7 @@ uvicorn[standard]
 pyswisseph
 nepali-datetime
 anthropic
+python-dotenv
 pydantic
 pytest
 httpx
