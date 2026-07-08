@@ -2,6 +2,7 @@ import { useState } from 'react'
 import BirthForm from './components/BirthForm'
 import ResultsPage from './components/ResultsPage'
 import LanguageToggle from './components/LanguageToggle'
+import Footer from './components/Footer'
 import { createChart } from './api'
 import { t } from './i18n'
 
@@ -25,9 +26,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-cream-100 text-maroon-700">
+    <div className="flex min-h-screen flex-col bg-cream-100 text-maroon-700">
       <header className="bg-maroon-500 px-4 py-4 shadow-md">
-        <div className="mx-auto flex max-w-4xl items-center justify-between">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2">
           <div>
             <h1 className="font-serif text-2xl font-bold text-gold-300">{t(lang, 'appName')}</h1>
             <p className="text-xs text-cream-100/80">{t(lang, 'tagline')}</p>
@@ -36,7 +37,7 @@ function App() {
         </div>
       </header>
 
-      <main>
+      <main className="flex-1">
         {result ? (
           <ResultsPage lang={lang} result={result} onReset={() => setResult(null)} />
         ) : (
@@ -47,6 +48,8 @@ function App() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   )
 }

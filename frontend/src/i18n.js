@@ -49,6 +49,9 @@ const DICT = {
     fromLagna: 'from your Lagna',
     fromMoon: 'from your Moon',
     nextIngress: 'Next sign change',
+    downloadPdf: 'Download PDF',
+    downloadingPdf: 'Generating PDF…',
+    downloadError: 'Could not generate the PDF. Please try again.',
   },
   ne: {
     appName: 'AstroTruth',
@@ -95,6 +98,9 @@ const DICT = {
     fromLagna: 'लग्नबाट',
     fromMoon: 'चन्द्रमाबाट',
     nextIngress: 'अर्को राशि परिवर्तन',
+    downloadPdf: 'PDF डाउनलोड गर्नुहोस्',
+    downloadingPdf: 'PDF तयार गर्दै…',
+    downloadError: 'PDF तयार गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
   },
 }
 
@@ -131,6 +137,13 @@ export const HOUSE_ORDINALS = {
     'पहिलो', 'दोस्रो', 'तेस्रो', 'चौथो', 'पाँचौं', 'छैटौं',
     'सातौं', 'आठौं', 'नवौं', 'दशौं', 'एघारौं', 'बाह्रौं',
   ],
+}
+
+// Always shown together, regardless of the selected UI language — the
+// footer disclaimer is bilingual on every page, not language-toggled.
+export const FOOTER_DISCLAIMER = {
+  en: 'Astrology is a traditional belief system, not a science. It describes tendencies, not certainties.',
+  ne: 'ज्योतिषशास्त्र एक परम्परागत विश्वास प्रणाली हो, विज्ञान होइन। यसले निश्चितता होइन, प्रवृत्तिहरू मात्र वर्णन गर्छ।',
 }
 
 export const SIGN_NAMES = {

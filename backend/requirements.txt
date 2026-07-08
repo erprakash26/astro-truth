@@ -8,3 +8,7 @@ pydantic
 pytest
 httpx
 tzdata
+jinja2
+playwright
+pymupdf
+slowapi

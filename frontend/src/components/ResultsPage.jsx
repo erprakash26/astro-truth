@@ -1,26 +1,59 @@
+import { useState } from 'react'
 import KundaliChart from './KundaliChart'
 import PlanetTable from './PlanetTable'
 import DashaTimeline from './DashaTimeline'
 import TransitsCard from './TransitsCard'
 import InterpretationPanel from './InterpretationPanel'
+import { downloadChartPdf } from '../api'
 import { t, SIGN_NAMES } from '../i18n'
 
 export default function ResultsPage({ lang, result, onReset }) {
   const { share_id: shareId, chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha, transits } = result
+  const [downloading, setDownloading] = useState(false)
+  const [downloadError, setDownloadError] = useState(null)
+
+  async function handleDownload() {
+    setDownloading(true)
+    setDownloadError(null)
+    try {
+      await downloadChartPdf({ shareId, language: lang })
+    } catch (err) {
+      setDownloadError(err.message || t(lang, 'downloadError'))
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-serif text-2xl font-bold text-maroon-700">{t(lang, 'chart')}</h1>
-        <button
-          type="button"
-          onClick={onReset}
-          className="rounded-md border border-maroon-400 px-3 py-1.5 text-sm font-medium text-maroon-600 hover:bg-maroon-500 hover:text-cream-50"
-          data-testid="new-chart-button"
-        >
-          {t(lang, 'newChart')}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={downloading}
+            className="rounded-md bg-maroon-500 px-3 py-1.5 text-sm font-semibold text-gold-300 shadow-md hover:bg-maroon-600 disabled:cursor-not-allowed disabled:opacity-60"
+            data-testid="download-pdf-button"
+          >
+            {downloading ? t(lang, 'downloadingPdf') : t(lang, 'downloadPdf')}
+          </button>
+          <button
+            type="button"
+            onClick={onReset}
+            className="rounded-md border border-maroon-400 px-3 py-1.5 text-sm font-medium text-maroon-600 hover:bg-maroon-500 hover:text-cream-50"
+            data-testid="new-chart-button"
+          >
+            {t(lang, 'newChart')}
+          </button>
+        </div>
       </div>
+
+      {downloadError && (
+        <p className="text-sm font-medium text-maroon-500" data-testid="download-error">
+          {downloadError}
+        </p>
+      )}
 
       <div className="grid gap-8 md:grid-cols-2 md:items-start">
         <div className="flex justify-center rounded-xl bg-cream-100 p-4 shadow-inner">

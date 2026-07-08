@@ -5,10 +5,13 @@ from datetime import time as time_cls
 from typing import Literal
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 load_dotenv()
 
@@ -17,10 +20,17 @@ from app.dasha import current_dasha, vimshottari
 from app.engine import compute_chart, local_time_to_utc
 from app.geocode import City, get_city, search_cities
 from app.interpret import interpret_chart, is_mock_mode
+from app.pdf import render_chart_pdf
 from app.storage import load_chart, new_share_id, save_chart
 from app.transits import compute_transits
 
+RATE_LIMIT = "10/minute"
+
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(title="AstroTruth API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -138,9 +148,29 @@ def _interpret_sse(share_id: str, language: str):
 
 
 @app.post("/api/interpret")
-def create_interpretation(payload: InterpretRequest) -> StreamingResponse:
+@limiter.limit(RATE_LIMIT)
+def create_interpretation(request: Request, payload: InterpretRequest) -> StreamingResponse:
     return StreamingResponse(
         _interpret_sse(payload.share_id, payload.language),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@app.get("/api/chart/{share_id}/pdf")
+@limiter.limit(RATE_LIMIT)
+async def get_chart_pdf(request: Request, share_id: str, language: str = "en") -> Response:
+    stored = load_chart(share_id)
+    if stored is None:
+        raise HTTPException(status_code=404, detail=f"Chart not found: {share_id}")
+
+    try:
+        pdf_bytes = await render_chart_pdf(stored, language)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Could not generate PDF: {exc}") from exc
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="astrotruth-{share_id}.pdf"'},
     )

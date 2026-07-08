@@ -27,6 +27,25 @@ export async function getConfig() {
   return res.json()
 }
 
+export async function downloadChartPdf({ shareId, language }) {
+  const url = new URL(`/api/chart/${shareId}/pdf`, BASE_URL)
+  url.searchParams.set('language', language)
+  const res = await fetch(url)
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `PDF request failed: ${res.status}`)
+  }
+  const blob = await res.blob()
+  const objectUrl = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = objectUrl
+  link.download = `astrotruth-${shareId}.pdf`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(objectUrl)
+}
+
 // Consumes the /api/interpret SSE stream. Server sends either bare
 // `data: {...}` chunks (event type defaults to "message") or a named
 // `event: error` / `event: done` block. Buffers partial reads across the

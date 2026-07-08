@@ -91,17 +91,20 @@ def _user_prompt(chart_json: dict) -> str:
     )
 
 
-def _stream_real(chart_json: dict, language: str) -> Iterator[str]:
-    import anthropic
-
+def _require_api_key() -> str:
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise RuntimeError(
             "ANTHROPIC_API_KEY is not set; cannot call the Anthropic API "
             "in real mode (USE_MOCK_LLM=false)."
         )
+    return api_key
 
-    client = anthropic.Anthropic(api_key=api_key)
+
+def _stream_real(chart_json: dict, language: str) -> Iterator[str]:
+    import anthropic
+
+    client = anthropic.Anthropic(api_key=_require_api_key())
 
     with client.messages.stream(
         model=MODEL,
@@ -110,6 +113,20 @@ def _stream_real(chart_json: dict, language: str) -> Iterator[str]:
         messages=[{"role": "user", "content": _user_prompt(chart_json)}],
     ) as stream:
         yield from stream.text_stream
+
+
+def _real_full_text(chart_json: dict, language: str) -> str:
+    import anthropic
+
+    client = anthropic.Anthropic(api_key=_require_api_key())
+
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=MAX_TOKENS,
+        system=_system_prompt(language),
+        messages=[{"role": "user", "content": _user_prompt(chart_json)}],
+    )
+    return "".join(block.text for block in response.content if block.type == "text")
 
 
 _MOCK_TEXT = {
@@ -224,12 +241,20 @@ _MOCK_TEXT = {
 }
 
 
-def _stream_mock(language: str) -> Iterator[str]:
+def _log_mock_mode() -> None:
     print(
         "MOCK MODE: interpret_chart is returning a canned example "
         "interpretation (USE_MOCK_LLM=true, no Anthropic API call made)."
     )
-    text = _MOCK_TEXT.get(language, _MOCK_TEXT["en"])
+
+
+def _mock_full_text(language: str) -> str:
+    return _MOCK_TEXT.get(language, _MOCK_TEXT["en"])
+
+
+def _stream_mock(language: str) -> Iterator[str]:
+    _log_mock_mode()
+    text = _mock_full_text(language)
     words = text.split(" ")
     for index, word in enumerate(words):
         yield word if index == 0 else " " + word
@@ -248,3 +273,15 @@ def interpret_chart(chart_json: dict, language: str = "en") -> Iterator[str]:
         yield from _stream_mock(language)
     else:
         yield from _stream_real(chart_json, language)
+
+
+def interpret_chart_text(chart_json: dict, language: str = "en") -> str:
+    """Non-streaming variant: returns the full interpretation as one string.
+
+    Used where a synchronous result is needed (e.g. PDF export) rather than
+    an SSE stream. Same modes and constraints as interpret_chart().
+    """
+    if is_mock_mode():
+        _log_mock_mode()
+        return _mock_full_text(language)
+    return _real_full_text(chart_json, language)
