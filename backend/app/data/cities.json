@@ -1,0 +1,1730 @@
+[
+  {
+    "id": "np-bhojpur",
+    "name": "Bhojpur",
+    "admin": "Bhojpur District",
+    "country": "Nepal",
+    "lat": 27.1758,
+    "lon": 87.0518,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dhankuta",
+    "name": "Dhankuta",
+    "admin": "Dhankuta District",
+    "country": "Nepal",
+    "lat": 26.9908,
+    "lon": 87.3442,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-ilam",
+    "name": "Ilam",
+    "admin": "Ilam District",
+    "country": "Nepal",
+    "lat": 26.9106,
+    "lon": 87.9349,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-bhadrapur",
+    "name": "Bhadrapur",
+    "admin": "Jhapa District",
+    "country": "Nepal",
+    "lat": 26.5919,
+    "lon": 88.065,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-diktel",
+    "name": "Diktel",
+    "admin": "Khotang District",
+    "country": "Nepal",
+    "lat": 27.2227,
+    "lon": 86.8011,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-biratnagar",
+    "name": "Biratnagar",
+    "admin": "Morang District",
+    "country": "Nepal",
+    "lat": 26.4582,
+    "lon": 87.2795,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-okhaldhunga",
+    "name": "Okhaldhunga",
+    "admin": "Okhaldhunga District",
+    "country": "Nepal",
+    "lat": 27.3221,
+    "lon": 86.5015,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-phidim",
+    "name": "Phidim",
+    "admin": "Panchthar District",
+    "country": "Nepal",
+    "lat": 27.1458,
+    "lon": 87.7756,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-khandabari",
+    "name": "Khandabari",
+    "admin": "Sankhuwasabha District",
+    "country": "Nepal",
+    "lat": 27.3766,
+    "lon": 87.2077,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-salleri",
+    "name": "Salleri",
+    "admin": "Solukhumbu District",
+    "country": "Nepal",
+    "lat": 27.5091,
+    "lon": 86.589,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-inaruwa",
+    "name": "Inaruwa",
+    "admin": "Sunsari District",
+    "country": "Nepal",
+    "lat": 26.6021,
+    "lon": 87.1517,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-taplejung",
+    "name": "Taplejung",
+    "admin": "Taplejung District",
+    "country": "Nepal",
+    "lat": 27.3574,
+    "lon": 87.68,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-terhathum",
+    "name": "Terhathum",
+    "admin": "Tehrathum District",
+    "country": "Nepal",
+    "lat": 27.1275,
+    "lon": 87.5396,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-gaighat",
+    "name": "Gaighat",
+    "admin": "Udayapur District",
+    "country": "Nepal",
+    "lat": 26.7929,
+    "lon": 86.7058,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-birganj",
+    "name": "Birganj",
+    "admin": "Parsa District",
+    "country": "Nepal",
+    "lat": 27.0398,
+    "lon": 84.8905,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-kalaiya",
+    "name": "Kalaiya",
+    "admin": "Bara District",
+    "country": "Nepal",
+    "lat": 27.0444,
+    "lon": 85.0066,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-gaur",
+    "name": "Gaur",
+    "admin": "Rautahat District",
+    "country": "Nepal",
+    "lat": 26.7811,
+    "lon": 85.2763,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-malangawa",
+    "name": "Malangawa",
+    "admin": "Sarlahi District",
+    "country": "Nepal",
+    "lat": 26.8655,
+    "lon": 85.5604,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-janakpur",
+    "name": "Janakpur",
+    "admin": "Dhanusha District",
+    "country": "Nepal",
+    "lat": 26.7365,
+    "lon": 85.9267,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-siraha",
+    "name": "Siraha",
+    "admin": "Siraha District",
+    "country": "Nepal",
+    "lat": 26.6658,
+    "lon": 86.2032,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-jaleswor",
+    "name": "Jaleswor",
+    "admin": "Mahottari District",
+    "country": "Nepal",
+    "lat": 26.6604,
+    "lon": 85.8051,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-rajbiraj",
+    "name": "Rajbiraj",
+    "admin": "Saptari District",
+    "country": "Nepal",
+    "lat": 26.5453,
+    "lon": 86.7505,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-sindhulimadi",
+    "name": "Sindhulimadi",
+    "admin": "Sindhuli District",
+    "country": "Nepal",
+    "lat": 27.2219,
+    "lon": 85.9095,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-ramechhap",
+    "name": "Ramechhap",
+    "admin": "Ramechhap District",
+    "country": "Nepal",
+    "lat": 27.3377,
+    "lon": 86.0818,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-charikot",
+    "name": "Charikot",
+    "admin": "Dolakha District",
+    "country": "Nepal",
+    "lat": 27.6848,
+    "lon": 86.0626,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-bhaktapur",
+    "name": "Bhaktapur",
+    "admin": "Bhaktapur District",
+    "country": "Nepal",
+    "lat": 27.6857,
+    "lon": 85.4338,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dhadingbesi",
+    "name": "Dhadingbesi",
+    "admin": "Dhading District",
+    "country": "Nepal",
+    "lat": 27.8768,
+    "lon": 84.8592,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-kathmandu",
+    "name": "Kathmandu",
+    "admin": "Kathmandu District",
+    "country": "Nepal",
+    "lat": 27.7129,
+    "lon": 85.3228,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dhulikhel",
+    "name": "Dhulikhel",
+    "admin": "Kavrepalanchok District",
+    "country": "Nepal",
+    "lat": 27.6231,
+    "lon": 85.5506,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-lalitpur",
+    "name": "Lalitpur",
+    "admin": "Lalitpur District",
+    "country": "Nepal",
+    "lat": 27.6837,
+    "lon": 85.3236,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-bidur",
+    "name": "Bidur",
+    "admin": "Nuwakot District",
+    "country": "Nepal",
+    "lat": 27.9205,
+    "lon": 85.1461,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dhunche",
+    "name": "Dhunche",
+    "admin": "Rasuwa District",
+    "country": "Nepal",
+    "lat": 28.123,
+    "lon": 85.2981,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-chautara",
+    "name": "Chautara",
+    "admin": "Sindhupalchok District",
+    "country": "Nepal",
+    "lat": 27.7865,
+    "lon": 85.7162,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-bharatpur",
+    "name": "Bharatpur",
+    "admin": "Chitwan District",
+    "country": "Nepal",
+    "lat": 27.6851,
+    "lon": 84.4458,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-hetauda",
+    "name": "Hetauda",
+    "admin": "Makwanpur District",
+    "country": "Nepal",
+    "lat": 27.4391,
+    "lon": 85.0325,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-baglung",
+    "name": "Baglung",
+    "admin": "Baglung District",
+    "country": "Nepal",
+    "lat": 28.2731,
+    "lon": 83.5897,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-gorkha",
+    "name": "Gorkha",
+    "admin": "Gorkha District",
+    "country": "Nepal",
+    "lat": 28.0057,
+    "lon": 84.6262,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-pokhara",
+    "name": "Pokhara",
+    "admin": "Kaski District",
+    "country": "Nepal",
+    "lat": 28.2219,
+    "lon": 83.9798,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-besishahar",
+    "name": "Besishahar",
+    "admin": "Lamjung District",
+    "country": "Nepal",
+    "lat": 28.241,
+    "lon": 84.3765,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-chame",
+    "name": "Chame",
+    "admin": "Manang District",
+    "country": "Nepal",
+    "lat": 28.5631,
+    "lon": 84.2391,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-jomsom",
+    "name": "Jomsom",
+    "admin": "Mustang District",
+    "country": "Nepal",
+    "lat": 28.7826,
+    "lon": 83.7296,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-beni",
+    "name": "Beni",
+    "admin": "Myagdi District",
+    "country": "Nepal",
+    "lat": 28.35,
+    "lon": 83.5589,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-kawasoti",
+    "name": "Kawasoti",
+    "admin": "Nawalpur District",
+    "country": "Nepal",
+    "lat": 27.6415,
+    "lon": 84.1252,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-kusma",
+    "name": "Kusma",
+    "admin": "Parbat District",
+    "country": "Nepal",
+    "lat": 28.2227,
+    "lon": 83.6757,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-syangja",
+    "name": "Syangja",
+    "admin": "Syangja District",
+    "country": "Nepal",
+    "lat": 28.0865,
+    "lon": 83.8386,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-damauli",
+    "name": "Damauli",
+    "admin": "Tanahun District",
+    "country": "Nepal",
+    "lat": 27.9873,
+    "lon": 84.2922,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-taulihawa",
+    "name": "Taulihawa",
+    "admin": "Kapilvastu District",
+    "country": "Nepal",
+    "lat": 27.5527,
+    "lon": 83.0485,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-parasi",
+    "name": "Parasi",
+    "admin": "Parasi District",
+    "country": "Nepal",
+    "lat": 27.5356,
+    "lon": 83.6663,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-shidharthanagar",
+    "name": "Shidharthanagar",
+    "admin": "Rupandehi District",
+    "country": "Nepal",
+    "lat": 27.5142,
+    "lon": 83.4542,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-sandhikharka",
+    "name": "Sandhikharka",
+    "admin": "Arghakhanchi District",
+    "country": "Nepal",
+    "lat": 27.9796,
+    "lon": 83.1294,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-tamghas",
+    "name": "Tamghas",
+    "admin": "Gulmi District",
+    "country": "Nepal",
+    "lat": 28.074,
+    "lon": 83.2494,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-tansen",
+    "name": "Tansen",
+    "admin": "Palpa District",
+    "country": "Nepal",
+    "lat": 27.8712,
+    "lon": 83.5487,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-tribhuwannagar",
+    "name": "Tribhuwannagar",
+    "admin": "Dang District",
+    "country": "Nepal",
+    "lat": 28.0449,
+    "lon": 82.4822,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-pyuthan",
+    "name": "Pyuthan",
+    "admin": "Pyuthan District",
+    "country": "Nepal",
+    "lat": 28.0963,
+    "lon": 82.875,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-libang",
+    "name": "Libang",
+    "admin": "Rolpa District",
+    "country": "Nepal",
+    "lat": 28.3151,
+    "lon": 82.6296,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-rukumkot",
+    "name": "Rukumkot",
+    "admin": "Eastern Rukum District",
+    "country": "Nepal",
+    "lat": 28.6254,
+    "lon": 82.6011,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-nepalganj",
+    "name": "Nepalganj",
+    "admin": "Banke District",
+    "country": "Nepal",
+    "lat": 28.0709,
+    "lon": 81.6263,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-gulariya",
+    "name": "Gulariya",
+    "admin": "Bardiya District",
+    "country": "Nepal",
+    "lat": 28.2105,
+    "lon": 81.3425,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-musikot",
+    "name": "Musikot",
+    "admin": "Western Rukum District",
+    "country": "Nepal",
+    "lat": 28.6292,
+    "lon": 82.4556,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-salyan",
+    "name": "Salyan",
+    "admin": "Salyan District",
+    "country": "Nepal",
+    "lat": 28.3857,
+    "lon": 82.15,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dunai",
+    "name": "Dunai",
+    "admin": "Dolpa District",
+    "country": "Nepal",
+    "lat": 28.9529,
+    "lon": 82.9066,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-simikot",
+    "name": "Simikot",
+    "admin": "Humla District",
+    "country": "Nepal",
+    "lat": 29.9753,
+    "lon": 81.8187,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-jumla",
+    "name": "Jumla",
+    "admin": "Jumla District",
+    "country": "Nepal",
+    "lat": 29.289,
+    "lon": 82.1861,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-manma",
+    "name": "Manma",
+    "admin": "Kalikot District",
+    "country": "Nepal",
+    "lat": 29.1487,
+    "lon": 81.6048,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-gamgadhi",
+    "name": "Gamgadhi",
+    "admin": "Mugu District",
+    "country": "Nepal",
+    "lat": 29.5539,
+    "lon": 82.1537,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-birendranagar",
+    "name": "Birendranagar",
+    "admin": "Surkhet District",
+    "country": "Nepal",
+    "lat": 28.5948,
+    "lon": 81.6259,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dailekh",
+    "name": "Dailekh",
+    "admin": "Dailekh District",
+    "country": "Nepal",
+    "lat": 28.8464,
+    "lon": 81.7063,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-jajarkot",
+    "name": "Jajarkot",
+    "admin": "Jajarkot District",
+    "country": "Nepal",
+    "lat": 28.7079,
+    "lon": 82.1963,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dhangadhi",
+    "name": "Dhangadhi",
+    "admin": "Kailali District",
+    "country": "Nepal",
+    "lat": 28.7006,
+    "lon": 80.6013,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-mangalsen",
+    "name": "Mangalsen",
+    "admin": "Achham District",
+    "country": "Nepal",
+    "lat": 29.1357,
+    "lon": 81.2419,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-silgadhi",
+    "name": "Silgadhi",
+    "admin": "Doti District",
+    "country": "Nepal",
+    "lat": 29.2624,
+    "lon": 80.9615,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-chainpur",
+    "name": "Chainpur",
+    "admin": "Bajhang District",
+    "country": "Nepal",
+    "lat": 29.5598,
+    "lon": 81.1953,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-martadi",
+    "name": "Martadi",
+    "admin": "Bajura District",
+    "country": "Nepal",
+    "lat": 29.4573,
+    "lon": 81.4793,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-mahendranagar",
+    "name": "Mahendranagar",
+    "admin": "Kanchanpur District",
+    "country": "Nepal",
+    "lat": 28.9658,
+    "lon": 80.1818,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-dadeldhura",
+    "name": "Dadeldhura",
+    "admin": "Dadeldhura District",
+    "country": "Nepal",
+    "lat": 29.303,
+    "lon": 80.5884,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-baitadi",
+    "name": "Baitadi",
+    "admin": "Baitadi District",
+    "country": "Nepal",
+    "lat": 29.5573,
+    "lon": 80.4252,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "np-darchula",
+    "name": "Darchula",
+    "admin": "Darchula District",
+    "country": "Nepal",
+    "lat": 29.8474,
+    "lon": 80.573,
+    "timezone": "Asia/Kathmandu"
+  },
+  {
+    "id": "united-kingdom-london",
+    "name": "London",
+    "admin": null,
+    "country": "United Kingdom",
+    "lat": 51.5074,
+    "lon": -0.1278,
+    "timezone": "Europe/London"
+  },
+  {
+    "id": "france-paris",
+    "name": "Paris",
+    "admin": null,
+    "country": "France",
+    "lat": 48.8566,
+    "lon": 2.3522,
+    "timezone": "Europe/Paris"
+  },
+  {
+    "id": "germany-berlin",
+    "name": "Berlin",
+    "admin": null,
+    "country": "Germany",
+    "lat": 52.52,
+    "lon": 13.405,
+    "timezone": "Europe/Berlin"
+  },
+  {
+    "id": "spain-madrid",
+    "name": "Madrid",
+    "admin": null,
+    "country": "Spain",
+    "lat": 40.4168,
+    "lon": -3.7038,
+    "timezone": "Europe/Madrid"
+  },
+  {
+    "id": "italy-rome",
+    "name": "Rome",
+    "admin": null,
+    "country": "Italy",
+    "lat": 41.9028,
+    "lon": 12.4964,
+    "timezone": "Europe/Rome"
+  },
+  {
+    "id": "netherlands-amsterdam",
+    "name": "Amsterdam",
+    "admin": null,
+    "country": "Netherlands",
+    "lat": 52.3676,
+    "lon": 4.9041,
+    "timezone": "Europe/Amsterdam"
+  },
+  {
+    "id": "belgium-brussels",
+    "name": "Brussels",
+    "admin": null,
+    "country": "Belgium",
+    "lat": 50.8503,
+    "lon": 4.3517,
+    "timezone": "Europe/Brussels"
+  },
+  {
+    "id": "austria-vienna",
+    "name": "Vienna",
+    "admin": null,
+    "country": "Austria",
+    "lat": 48.2082,
+    "lon": 16.3738,
+    "timezone": "Europe/Vienna"
+  },
+  {
+    "id": "switzerland-zurich",
+    "name": "Zurich",
+    "admin": null,
+    "country": "Switzerland",
+    "lat": 47.3769,
+    "lon": 8.5417,
+    "timezone": "Europe/Zurich"
+  },
+  {
+    "id": "switzerland-geneva",
+    "name": "Geneva",
+    "admin": null,
+    "country": "Switzerland",
+    "lat": 46.2044,
+    "lon": 6.1432,
+    "timezone": "Europe/Zurich"
+  },
+  {
+    "id": "ireland-dublin",
+    "name": "Dublin",
+    "admin": null,
+    "country": "Ireland",
+    "lat": 53.3498,
+    "lon": -6.2603,
+    "timezone": "Europe/Dublin"
+  },
+  {
+    "id": "portugal-lisbon",
+    "name": "Lisbon",
+    "admin": null,
+    "country": "Portugal",
+    "lat": 38.7223,
+    "lon": -9.1393,
+    "timezone": "Europe/Lisbon"
+  },
+  {
+    "id": "greece-athens",
+    "name": "Athens",
+    "admin": null,
+    "country": "Greece",
+    "lat": 37.9838,
+    "lon": 23.7275,
+    "timezone": "Europe/Athens"
+  },
+  {
+    "id": "sweden-stockholm",
+    "name": "Stockholm",
+    "admin": null,
+    "country": "Sweden",
+    "lat": 59.3293,
+    "lon": 18.0686,
+    "timezone": "Europe/Stockholm"
+  },
+  {
+    "id": "norway-oslo",
+    "name": "Oslo",
+    "admin": null,
+    "country": "Norway",
+    "lat": 59.9139,
+    "lon": 10.7522,
+    "timezone": "Europe/Oslo"
+  },
+  {
+    "id": "denmark-copenhagen",
+    "name": "Copenhagen",
+    "admin": null,
+    "country": "Denmark",
+    "lat": 55.6761,
+    "lon": 12.5683,
+    "timezone": "Europe/Copenhagen"
+  },
+  {
+    "id": "finland-helsinki",
+    "name": "Helsinki",
+    "admin": null,
+    "country": "Finland",
+    "lat": 60.1699,
+    "lon": 24.9384,
+    "timezone": "Europe/Helsinki"
+  },
+  {
+    "id": "poland-warsaw",
+    "name": "Warsaw",
+    "admin": null,
+    "country": "Poland",
+    "lat": 52.2297,
+    "lon": 21.0122,
+    "timezone": "Europe/Warsaw"
+  },
+  {
+    "id": "czech-republic-prague",
+    "name": "Prague",
+    "admin": null,
+    "country": "Czech Republic",
+    "lat": 50.0755,
+    "lon": 14.4378,
+    "timezone": "Europe/Prague"
+  },
+  {
+    "id": "hungary-budapest",
+    "name": "Budapest",
+    "admin": null,
+    "country": "Hungary",
+    "lat": 47.4979,
+    "lon": 19.0402,
+    "timezone": "Europe/Budapest"
+  },
+  {
+    "id": "russia-moscow",
+    "name": "Moscow",
+    "admin": null,
+    "country": "Russia",
+    "lat": 55.7558,
+    "lon": 37.6173,
+    "timezone": "Europe/Moscow"
+  },
+  {
+    "id": "turkey-istanbul",
+    "name": "Istanbul",
+    "admin": null,
+    "country": "Turkey",
+    "lat": 41.0082,
+    "lon": 28.9784,
+    "timezone": "Europe/Istanbul"
+  },
+  {
+    "id": "egypt-cairo",
+    "name": "Cairo",
+    "admin": null,
+    "country": "Egypt",
+    "lat": 30.0444,
+    "lon": 31.2357,
+    "timezone": "Africa/Cairo"
+  },
+  {
+    "id": "united-arab-emirates-dubai",
+    "name": "Dubai",
+    "admin": null,
+    "country": "United Arab Emirates",
+    "lat": 25.2048,
+    "lon": 55.2708,
+    "timezone": "Asia/Dubai"
+  },
+  {
+    "id": "united-arab-emirates-abu-dhabi",
+    "name": "Abu Dhabi",
+    "admin": null,
+    "country": "United Arab Emirates",
+    "lat": 24.4539,
+    "lon": 54.3773,
+    "timezone": "Asia/Dubai"
+  },
+  {
+    "id": "saudi-arabia-riyadh",
+    "name": "Riyadh",
+    "admin": null,
+    "country": "Saudi Arabia",
+    "lat": 24.7136,
+    "lon": 46.6753,
+    "timezone": "Asia/Riyadh"
+  },
+  {
+    "id": "qatar-doha",
+    "name": "Doha",
+    "admin": null,
+    "country": "Qatar",
+    "lat": 25.2854,
+    "lon": 51.531,
+    "timezone": "Asia/Qatar"
+  },
+  {
+    "id": "israel-tel-aviv",
+    "name": "Tel Aviv",
+    "admin": null,
+    "country": "Israel",
+    "lat": 32.0853,
+    "lon": 34.7818,
+    "timezone": "Asia/Jerusalem"
+  },
+  {
+    "id": "israel-jerusalem",
+    "name": "Jerusalem",
+    "admin": null,
+    "country": "Israel",
+    "lat": 31.7683,
+    "lon": 35.2137,
+    "timezone": "Asia/Jerusalem"
+  },
+  {
+    "id": "india-mumbai",
+    "name": "Mumbai",
+    "admin": "Maharashtra",
+    "country": "India",
+    "lat": 19.076,
+    "lon": 72.8777,
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "id": "india-new-delhi",
+    "name": "New Delhi",
+    "admin": "Delhi",
+    "country": "India",
+    "lat": 28.6139,
+    "lon": 77.209,
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "id": "india-bangalore",
+    "name": "Bangalore",
+    "admin": "Karnataka",
+    "country": "India",
+    "lat": 12.9716,
+    "lon": 77.5946,
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "id": "india-chennai",
+    "name": "Chennai",
+    "admin": "Tamil Nadu",
+    "country": "India",
+    "lat": 13.0827,
+    "lon": 80.2707,
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "id": "india-kolkata",
+    "name": "Kolkata",
+    "admin": "West Bengal",
+    "country": "India",
+    "lat": 22.5726,
+    "lon": 88.3639,
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "id": "india-hyderabad",
+    "name": "Hyderabad",
+    "admin": "Telangana",
+    "country": "India",
+    "lat": 17.385,
+    "lon": 78.4867,
+    "timezone": "Asia/Kolkata"
+  },
+  {
+    "id": "pakistan-islamabad",
+    "name": "Islamabad",
+    "admin": null,
+    "country": "Pakistan",
+    "lat": 33.6844,
+    "lon": 73.0479,
+    "timezone": "Asia/Karachi"
+  },
+  {
+    "id": "pakistan-karachi",
+    "name": "Karachi",
+    "admin": null,
+    "country": "Pakistan",
+    "lat": 24.8607,
+    "lon": 67.0011,
+    "timezone": "Asia/Karachi"
+  },
+  {
+    "id": "pakistan-lahore",
+    "name": "Lahore",
+    "admin": null,
+    "country": "Pakistan",
+    "lat": 31.5497,
+    "lon": 74.3436,
+    "timezone": "Asia/Karachi"
+  },
+  {
+    "id": "bangladesh-dhaka",
+    "name": "Dhaka",
+    "admin": null,
+    "country": "Bangladesh",
+    "lat": 23.8103,
+    "lon": 90.4125,
+    "timezone": "Asia/Dhaka"
+  },
+  {
+    "id": "sri-lanka-colombo",
+    "name": "Colombo",
+    "admin": null,
+    "country": "Sri Lanka",
+    "lat": 6.9271,
+    "lon": 79.8612,
+    "timezone": "Asia/Colombo"
+  },
+  {
+    "id": "bhutan-thimphu",
+    "name": "Thimphu",
+    "admin": null,
+    "country": "Bhutan",
+    "lat": 27.4712,
+    "lon": 89.6339,
+    "timezone": "Asia/Thimphu"
+  },
+  {
+    "id": "china-beijing",
+    "name": "Beijing",
+    "admin": null,
+    "country": "China",
+    "lat": 39.9042,
+    "lon": 116.4074,
+    "timezone": "Asia/Shanghai"
+  },
+  {
+    "id": "china-shanghai",
+    "name": "Shanghai",
+    "admin": null,
+    "country": "China",
+    "lat": 31.2304,
+    "lon": 121.4737,
+    "timezone": "Asia/Shanghai"
+  },
+  {
+    "id": "hong-kong-hong-kong",
+    "name": "Hong Kong",
+    "admin": null,
+    "country": "Hong Kong",
+    "lat": 22.3193,
+    "lon": 114.1694,
+    "timezone": "Asia/Hong_Kong"
+  },
+  {
+    "id": "taiwan-taipei",
+    "name": "Taipei",
+    "admin": null,
+    "country": "Taiwan",
+    "lat": 25.033,
+    "lon": 121.5654,
+    "timezone": "Asia/Taipei"
+  },
+  {
+    "id": "japan-tokyo",
+    "name": "Tokyo",
+    "admin": null,
+    "country": "Japan",
+    "lat": 35.6762,
+    "lon": 139.6503,
+    "timezone": "Asia/Tokyo"
+  },
+  {
+    "id": "japan-osaka",
+    "name": "Osaka",
+    "admin": null,
+    "country": "Japan",
+    "lat": 34.6937,
+    "lon": 135.5023,
+    "timezone": "Asia/Tokyo"
+  },
+  {
+    "id": "south-korea-seoul",
+    "name": "Seoul",
+    "admin": null,
+    "country": "South Korea",
+    "lat": 37.5665,
+    "lon": 126.978,
+    "timezone": "Asia/Seoul"
+  },
+  {
+    "id": "singapore-singapore",
+    "name": "Singapore",
+    "admin": null,
+    "country": "Singapore",
+    "lat": 1.3521,
+    "lon": 103.8198,
+    "timezone": "Asia/Singapore"
+  },
+  {
+    "id": "malaysia-kuala-lumpur",
+    "name": "Kuala Lumpur",
+    "admin": null,
+    "country": "Malaysia",
+    "lat": 3.139,
+    "lon": 101.6869,
+    "timezone": "Asia/Kuala_Lumpur"
+  },
+  {
+    "id": "thailand-bangkok",
+    "name": "Bangkok",
+    "admin": null,
+    "country": "Thailand",
+    "lat": 13.7563,
+    "lon": 100.5018,
+    "timezone": "Asia/Bangkok"
+  },
+  {
+    "id": "indonesia-jakarta",
+    "name": "Jakarta",
+    "admin": null,
+    "country": "Indonesia",
+    "lat": -6.2088,
+    "lon": 106.8456,
+    "timezone": "Asia/Jakarta"
+  },
+  {
+    "id": "philippines-manila",
+    "name": "Manila",
+    "admin": null,
+    "country": "Philippines",
+    "lat": 14.5995,
+    "lon": 120.9842,
+    "timezone": "Asia/Manila"
+  },
+  {
+    "id": "vietnam-hanoi",
+    "name": "Hanoi",
+    "admin": null,
+    "country": "Vietnam",
+    "lat": 21.0285,
+    "lon": 105.8542,
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "vietnam-ho-chi-minh-city",
+    "name": "Ho Chi Minh City",
+    "admin": null,
+    "country": "Vietnam",
+    "lat": 10.8231,
+    "lon": 106.6297,
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "australia-sydney",
+    "name": "Sydney",
+    "admin": "NSW",
+    "country": "Australia",
+    "lat": -33.8688,
+    "lon": 151.2093,
+    "timezone": "Australia/Sydney"
+  },
+  {
+    "id": "australia-melbourne",
+    "name": "Melbourne",
+    "admin": "VIC",
+    "country": "Australia",
+    "lat": -37.8136,
+    "lon": 144.9631,
+    "timezone": "Australia/Melbourne"
+  },
+  {
+    "id": "australia-brisbane",
+    "name": "Brisbane",
+    "admin": "QLD",
+    "country": "Australia",
+    "lat": -27.4698,
+    "lon": 153.0251,
+    "timezone": "Australia/Brisbane"
+  },
+  {
+    "id": "australia-perth",
+    "name": "Perth",
+    "admin": "WA",
+    "country": "Australia",
+    "lat": -31.9505,
+    "lon": 115.8605,
+    "timezone": "Australia/Perth"
+  },
+  {
+    "id": "new-zealand-auckland",
+    "name": "Auckland",
+    "admin": null,
+    "country": "New Zealand",
+    "lat": -36.8485,
+    "lon": 174.7633,
+    "timezone": "Pacific/Auckland"
+  },
+  {
+    "id": "new-zealand-wellington",
+    "name": "Wellington",
+    "admin": null,
+    "country": "New Zealand",
+    "lat": -41.2865,
+    "lon": 174.7762,
+    "timezone": "Pacific/Auckland"
+  },
+  {
+    "id": "canada-toronto",
+    "name": "Toronto",
+    "admin": "ON",
+    "country": "Canada",
+    "lat": 43.6532,
+    "lon": -79.3832,
+    "timezone": "America/Toronto"
+  },
+  {
+    "id": "canada-vancouver",
+    "name": "Vancouver",
+    "admin": "BC",
+    "country": "Canada",
+    "lat": 49.2827,
+    "lon": -123.1207,
+    "timezone": "America/Vancouver"
+  },
+  {
+    "id": "canada-montreal",
+    "name": "Montreal",
+    "admin": "QC",
+    "country": "Canada",
+    "lat": 45.5019,
+    "lon": -73.5674,
+    "timezone": "America/Toronto"
+  },
+  {
+    "id": "canada-ottawa",
+    "name": "Ottawa",
+    "admin": "ON",
+    "country": "Canada",
+    "lat": 45.4215,
+    "lon": -75.6972,
+    "timezone": "America/Toronto"
+  },
+  {
+    "id": "mexico-mexico-city",
+    "name": "Mexico City",
+    "admin": null,
+    "country": "Mexico",
+    "lat": 19.4326,
+    "lon": -99.1332,
+    "timezone": "America/Mexico_City"
+  },
+  {
+    "id": "brazil-sao-paulo",
+    "name": "Sao Paulo",
+    "admin": null,
+    "country": "Brazil",
+    "lat": -23.5505,
+    "lon": -46.6333,
+    "timezone": "America/Sao_Paulo"
+  },
+  {
+    "id": "brazil-rio-de-janeiro",
+    "name": "Rio de Janeiro",
+    "admin": null,
+    "country": "Brazil",
+    "lat": -22.9068,
+    "lon": -43.1729,
+    "timezone": "America/Sao_Paulo"
+  },
+  {
+    "id": "argentina-buenos-aires",
+    "name": "Buenos Aires",
+    "admin": null,
+    "country": "Argentina",
+    "lat": -34.6037,
+    "lon": -58.3816,
+    "timezone": "America/Argentina/Buenos_Aires"
+  },
+  {
+    "id": "chile-santiago",
+    "name": "Santiago",
+    "admin": null,
+    "country": "Chile",
+    "lat": -33.4489,
+    "lon": -70.6693,
+    "timezone": "America/Santiago"
+  },
+  {
+    "id": "peru-lima",
+    "name": "Lima",
+    "admin": null,
+    "country": "Peru",
+    "lat": -12.0464,
+    "lon": -77.0428,
+    "timezone": "America/Lima"
+  },
+  {
+    "id": "colombia-bogota",
+    "name": "Bogota",
+    "admin": null,
+    "country": "Colombia",
+    "lat": 4.711,
+    "lon": -74.0721,
+    "timezone": "America/Bogota"
+  },
+  {
+    "id": "south-africa-johannesburg",
+    "name": "Johannesburg",
+    "admin": null,
+    "country": "South Africa",
+    "lat": -26.2041,
+    "lon": 28.0473,
+    "timezone": "Africa/Johannesburg"
+  },
+  {
+    "id": "south-africa-cape-town",
+    "name": "Cape Town",
+    "admin": null,
+    "country": "South Africa",
+    "lat": -33.9249,
+    "lon": 18.4241,
+    "timezone": "Africa/Johannesburg"
+  },
+  {
+    "id": "kenya-nairobi",
+    "name": "Nairobi",
+    "admin": null,
+    "country": "Kenya",
+    "lat": -1.2921,
+    "lon": 36.8219,
+    "timezone": "Africa/Nairobi"
+  },
+  {
+    "id": "nigeria-lagos",
+    "name": "Lagos",
+    "admin": null,
+    "country": "Nigeria",
+    "lat": 6.5244,
+    "lon": 3.3792,
+    "timezone": "Africa/Lagos"
+  },
+  {
+    "id": "morocco-casablanca",
+    "name": "Casablanca",
+    "admin": null,
+    "country": "Morocco",
+    "lat": 33.5731,
+    "lon": -7.5898,
+    "timezone": "Africa/Casablanca"
+  },
+  {
+    "id": "tunisia-tunis",
+    "name": "Tunis",
+    "admin": null,
+    "country": "Tunisia",
+    "lat": 36.8065,
+    "lon": 10.1815,
+    "timezone": "Africa/Tunis"
+  },
+  {
+    "id": "united-states-new-york",
+    "name": "New York",
+    "admin": "NY",
+    "country": "United States",
+    "lat": 40.7128,
+    "lon": -74.006,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-los-angeles",
+    "name": "Los Angeles",
+    "admin": "CA",
+    "country": "United States",
+    "lat": 34.0522,
+    "lon": -118.2437,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-chicago",
+    "name": "Chicago",
+    "admin": "IL",
+    "country": "United States",
+    "lat": 41.8781,
+    "lon": -87.6298,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-houston",
+    "name": "Houston",
+    "admin": "TX",
+    "country": "United States",
+    "lat": 29.7604,
+    "lon": -95.3698,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-phoenix",
+    "name": "Phoenix",
+    "admin": "AZ",
+    "country": "United States",
+    "lat": 33.4484,
+    "lon": -112.074,
+    "timezone": "America/Phoenix"
+  },
+  {
+    "id": "united-states-philadelphia",
+    "name": "Philadelphia",
+    "admin": "PA",
+    "country": "United States",
+    "lat": 39.9526,
+    "lon": -75.1652,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-san-antonio",
+    "name": "San Antonio",
+    "admin": "TX",
+    "country": "United States",
+    "lat": 29.4241,
+    "lon": -98.4936,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-san-diego",
+    "name": "San Diego",
+    "admin": "CA",
+    "country": "United States",
+    "lat": 32.7157,
+    "lon": -117.1611,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-dallas",
+    "name": "Dallas",
+    "admin": "TX",
+    "country": "United States",
+    "lat": 32.7767,
+    "lon": -96.797,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-san-jose",
+    "name": "San Jose",
+    "admin": "CA",
+    "country": "United States",
+    "lat": 37.3382,
+    "lon": -121.8863,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-austin",
+    "name": "Austin",
+    "admin": "TX",
+    "country": "United States",
+    "lat": 30.2672,
+    "lon": -97.7431,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-jacksonville",
+    "name": "Jacksonville",
+    "admin": "FL",
+    "country": "United States",
+    "lat": 30.3322,
+    "lon": -81.6557,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-san-francisco",
+    "name": "San Francisco",
+    "admin": "CA",
+    "country": "United States",
+    "lat": 37.7749,
+    "lon": -122.4194,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-columbus",
+    "name": "Columbus",
+    "admin": "OH",
+    "country": "United States",
+    "lat": 39.9612,
+    "lon": -82.9988,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-fort-worth",
+    "name": "Fort Worth",
+    "admin": "TX",
+    "country": "United States",
+    "lat": 32.7555,
+    "lon": -97.3308,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-indianapolis",
+    "name": "Indianapolis",
+    "admin": "IN",
+    "country": "United States",
+    "lat": 39.7684,
+    "lon": -86.1581,
+    "timezone": "America/Indiana/Indianapolis"
+  },
+  {
+    "id": "united-states-charlotte",
+    "name": "Charlotte",
+    "admin": "NC",
+    "country": "United States",
+    "lat": 35.2271,
+    "lon": -80.8431,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-seattle",
+    "name": "Seattle",
+    "admin": "WA",
+    "country": "United States",
+    "lat": 47.6062,
+    "lon": -122.3321,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-denver",
+    "name": "Denver",
+    "admin": "CO",
+    "country": "United States",
+    "lat": 39.7392,
+    "lon": -104.9903,
+    "timezone": "America/Denver"
+  },
+  {
+    "id": "united-states-washington",
+    "name": "Washington",
+    "admin": "DC",
+    "country": "United States",
+    "lat": 38.9072,
+    "lon": -77.0369,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-boston",
+    "name": "Boston",
+    "admin": "MA",
+    "country": "United States",
+    "lat": 42.3601,
+    "lon": -71.0589,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-nashville",
+    "name": "Nashville",
+    "admin": "TN",
+    "country": "United States",
+    "lat": 36.1627,
+    "lon": -86.7816,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-detroit",
+    "name": "Detroit",
+    "admin": "MI",
+    "country": "United States",
+    "lat": 42.3314,
+    "lon": -83.0458,
+    "timezone": "America/Detroit"
+  },
+  {
+    "id": "united-states-portland",
+    "name": "Portland",
+    "admin": "OR",
+    "country": "United States",
+    "lat": 45.5152,
+    "lon": -122.6784,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-las-vegas",
+    "name": "Las Vegas",
+    "admin": "NV",
+    "country": "United States",
+    "lat": 36.1699,
+    "lon": -115.1398,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-memphis",
+    "name": "Memphis",
+    "admin": "TN",
+    "country": "United States",
+    "lat": 35.1495,
+    "lon": -90.049,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-louisville",
+    "name": "Louisville",
+    "admin": "KY",
+    "country": "United States",
+    "lat": 38.2527,
+    "lon": -85.7585,
+    "timezone": "America/Kentucky/Louisville"
+  },
+  {
+    "id": "united-states-baltimore",
+    "name": "Baltimore",
+    "admin": "MD",
+    "country": "United States",
+    "lat": 39.2904,
+    "lon": -76.6122,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-milwaukee",
+    "name": "Milwaukee",
+    "admin": "WI",
+    "country": "United States",
+    "lat": 43.0389,
+    "lon": -87.9065,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-albuquerque",
+    "name": "Albuquerque",
+    "admin": "NM",
+    "country": "United States",
+    "lat": 35.0844,
+    "lon": -106.6504,
+    "timezone": "America/Denver"
+  },
+  {
+    "id": "united-states-tucson",
+    "name": "Tucson",
+    "admin": "AZ",
+    "country": "United States",
+    "lat": 32.2226,
+    "lon": -110.9747,
+    "timezone": "America/Phoenix"
+  },
+  {
+    "id": "united-states-sacramento",
+    "name": "Sacramento",
+    "admin": "CA",
+    "country": "United States",
+    "lat": 38.5816,
+    "lon": -121.4944,
+    "timezone": "America/Los_Angeles"
+  },
+  {
+    "id": "united-states-atlanta",
+    "name": "Atlanta",
+    "admin": "GA",
+    "country": "United States",
+    "lat": 33.749,
+    "lon": -84.388,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-miami",
+    "name": "Miami",
+    "admin": "FL",
+    "country": "United States",
+    "lat": 25.7617,
+    "lon": -80.1918,
+    "timezone": "America/New_York"
+  },
+  {
+    "id": "united-states-minneapolis",
+    "name": "Minneapolis",
+    "admin": "MN",
+    "country": "United States",
+    "lat": 44.9778,
+    "lon": -93.265,
+    "timezone": "America/Chicago"
+  },
+  {
+    "id": "united-states-honolulu",
+    "name": "Honolulu",
+    "admin": "HI",
+    "country": "United States",
+    "lat": 21.3069,
+    "lon": -157.8583,
+    "timezone": "Pacific/Honolulu"
+  },
+  {
+    "id": "united-states-anchorage",
+    "name": "Anchorage",
+    "admin": "AK",
+    "country": "United States",
+    "lat": 61.2181,
+    "lon": -149.9003,
+    "timezone": "America/Anchorage"
+  }
+]
