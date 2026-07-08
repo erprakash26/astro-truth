@@ -73,6 +73,7 @@ LABELS = {
         "next_ingress": "Next sign change",
         "dasha_timeline": "Vimshottari Dasha Timeline",
         "mahadasha": "Mahadasha",
+        "antardasha": "Antardasha",
         "start": "Start",
         "end": "End",
         "current": "Current",
@@ -95,6 +96,7 @@ LABELS = {
         "next_ingress": "अर्को राशि परिवर्तन",
         "dasha_timeline": "विंशोत्तरी दशा समयरेखा",
         "mahadasha": "महादशा",
+        "antardasha": "अन्तर्दशा",
         "start": "सुरु",
         "end": "अन्त्य",
         "current": "हालको",
@@ -156,15 +158,35 @@ def _font_data_uri() -> str:
 
 
 def _mahadasha_rows(dasha_timeline: list[dict], current_dasha: dict | None) -> list[dict]:
-    current_start = current_dasha["mahadasha"]["start"] if current_dasha else None
+    """One row per mahadasha; the currently active one also carries its full
+    antardasha breakdown (mirrors the web page, where only the active
+    mahadasha's antardashas are shown by default)."""
+    current_maha_start = current_dasha["mahadasha"]["start"] if current_dasha else None
+    current_antar_start = current_dasha["antardasha"]["start"] if current_dasha else None
+
     rows = []
     for period in dasha_timeline:
+        is_current = current_maha_start is not None and period["start"] == current_maha_start
+        antardasha_rows = (
+            [
+                {
+                    "lord": antar["lord"],
+                    "start": antar["start"],
+                    "end": antar["end"],
+                    "is_current": current_antar_start is not None and antar["start"] == current_antar_start,
+                }
+                for antar in period["antardashas"]
+            ]
+            if is_current
+            else []
+        )
         rows.append(
             {
                 "lord": period["lord"],
                 "start": period["start"],
                 "end": period["end"],
-                "is_current": current_start is not None and period["start"] == current_start,
+                "is_current": is_current,
+                "antardasha_rows": antardasha_rows,
             }
         )
     return rows

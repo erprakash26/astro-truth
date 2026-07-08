@@ -50,6 +50,19 @@
   tbody tr:nth-child(even) { background: #fbf3e0; }
   tbody tr.current-row { background: #d4af3733; font-weight: bold; }
 
+  .antardasha-table { width: 100%; border-collapse: collapse; margin: 0; }
+  .antardasha-table td {
+    padding: 3px 8px 3px 26px;
+    font-size: 9px;
+    color: #6b1a24;
+    border: none;
+  }
+  .antardasha-table tr.antar-current td {
+    background: #d4af3733;
+    font-weight: bold;
+    color: #3f0f15;
+  }
+
   .badge {
     display: inline-block;
     padding: 1px 6px;
@@ -156,6 +169,23 @@
           <td>{{ row.start[:10] }}</td>
           <td>{{ row.end[:10] }}</td>
         </tr>
+        {% if row.antardasha_rows %}
+        <tr>
+          <td colspan="3" style="padding:0 0 6px 0;">
+            <table class="antardasha-table">
+              <tbody>
+                {% for antar in row.antardasha_rows %}
+                <tr class="{{ 'antar-current' if antar.is_current else '' }}">
+                  <td>{{ row.lord }}&ndash;{{ antar.lord }} {{ labels.antardasha }}</td>
+                  <td>{{ antar.start[:10] }}</td>
+                  <td>{{ antar.end[:10] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        {% endif %}
         {% endfor %}
       </tbody>
     </table>

@@ -68,6 +68,15 @@ def test_english_pdf_is_non_blank_and_contains_expected_text(reference_stored):
     assert "Saturn" in text
     assert "not a science" in text  # disclaimer, in the footer on every page
 
+    # Antardasha breakdown for the currently active mahadasha, matching the
+    # web page's behavior: computed from `now`, not hardcoded, since the
+    # active mahadasha/antardasha shifts over time.
+    current = reference_stored["current_dasha"]
+    maha_lord = current["mahadasha"]["lord"]
+    antar_lord = current["antardasha"]["lord"]
+    assert f"{maha_lord}–{antar_lord} Antardasha" in text
+    assert f"{maha_lord} · Current" in text
+
 
 def test_nepali_pdf_is_non_blank_and_contains_expected_text(reference_stored):
     pdf_bytes = _render(reference_stored, "ne")
@@ -80,6 +89,14 @@ def test_nepali_pdf_is_non_blank_and_contains_expected_text(reference_stored):
     assert "कुण्डली चक्र" in text  # chart title
     assert "बृहस्पति" in text  # Jupiter, transits card
     assert "निश्चितता होइन" in text  # disclaimer, in the footer on every page
+
+    # Same antardasha breakdown, localized: lord names stay in English (as
+    # stored in the API data) but the "Antardasha"/"Current" labels localize.
+    current = reference_stored["current_dasha"]
+    maha_lord = current["mahadasha"]["lord"]
+    antar_lord = current["antardasha"]["lord"]
+    assert f"{maha_lord}–{antar_lord} अन्तर्दशा" in text
+    assert "हालको" in text  # हालको ("Current")
 
 
 def test_pdf_has_multiple_pages(reference_stored):
