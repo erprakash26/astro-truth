@@ -64,6 +64,11 @@ under its own heading written as "## <title>":
 4. Strengths and cautions — summarize exalted/own-sign/moolatrikona
    planets as strengths and debilitated planets as cautions, citing only
    the dignity flags present in the JSON.
+5. Current transits (gochara) — the JSON includes a "transits" object with
+   Jupiter's and Saturn's present sign, house from the natal lagna, house
+   from the natal Moon, and next sign-ingress date. Describe what these two
+   transits classically signify given those exact houses — do not invent a
+   transit house, sign, or ingress date beyond what "transits" states.
 
 Tone: warm, direct, and honest — this is a real person reading about their
 own chart. Do not hedge excessively, but do not overstate certainty either.
@@ -150,6 +155,16 @@ _MOCK_TEXT = {
         "Saturn's demand to slow down and do things properly. It's not a "
         "weakness so much as a standing invitation to build patience "
         "deliberately, rather than have it forced on you.\n\n"
+        "## Current transits (gochara)\n\n"
+        "Jupiter is currently transiting Cancer, your 4th house from lagna "
+        "and 10th house from your natal Moon — a classic combination for "
+        "attention on home, inner security, and career or public standing "
+        "at once. Saturn is transiting Pisces, your 12th house from lagna "
+        "and 6th house from your natal Moon; the 12th-from-lagna leg often "
+        "asks for rest, withdrawal, or letting go, while the 6th-from-Moon "
+        "leg traditionally favors discipline around health, routine, and "
+        "clearing obligations. Both transits move on into the next sign in "
+        "due course — see the exact ingress dates in your chart data.\n\n"
         f"{DISCLAIMER}"
     ),
     "ne": (
@@ -192,6 +207,15 @@ _MOCK_TEXT = {
         "कार्य गर्ने (मेष) प्रवृत्ति र सही ढंगले "
         "ढिलो गर्नुपर्ने शनिको माग बीच घर्षण "
         "देखाउँछ।\n\n"
+        "## हालको गोचर (ट्रान्जिट)\n\n"
+        "बृहस्पति हाल कर्कट राशिमा गोचर गर्दैछ, जुन "
+        "तपाईंको लग्नबाट चौथो र चन्द्रमाबाट दशौं भाव "
+        "हो — घर, आन्तरिक सुरक्षा र करियर वा सार्वजनिक "
+        "प्रतिष्ठामा एकैसाथ ध्यान तान्ने संयोजन। शनि "
+        "हाल मीन राशिमा गोचर गर्दैछ, जुन लग्नबाट बाह्रौं "
+        "र चन्द्रमाबाट छैटौं भाव हो — यसले विश्राम वा "
+        "स्वास्थ्य र दिनचर्यामा अनुशासन माग्न सक्छ। "
+        "दुवै ग्रह समयक्रममा अर्को राशिमा सर्नेछन्।\n\n"
         "ज्योतिषशास्त्र एक परम्परागत विश्वास "
         "प्रणाली हो, विज्ञान होइन। यसले "
         "निश्चितता होइन, प्रवृत्तिहरू मात्र "

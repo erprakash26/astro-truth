@@ -1,11 +1,12 @@
 import KundaliChart from './KundaliChart'
 import PlanetTable from './PlanetTable'
 import DashaTimeline from './DashaTimeline'
+import TransitsCard from './TransitsCard'
 import InterpretationPanel from './InterpretationPanel'
 import { t, SIGN_NAMES } from '../i18n'
 
 export default function ResultsPage({ lang, result, onReset }) {
-  const { share_id: shareId, chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha } = result
+  const { share_id: shareId, chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha, transits } = result
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
@@ -33,6 +34,10 @@ export default function ResultsPage({ lang, result, onReset }) {
           </p>
         </div>
       </div>
+
+      <section>
+        <TransitsCard lang={lang} transits={transits} />
+      </section>
 
       <section>
         <h2 className="mb-3 font-serif text-xl font-semibold text-maroon-700">{t(lang, 'planets')}</h2>

@@ -18,6 +18,7 @@ from app.engine import compute_chart, local_time_to_utc
 from app.geocode import City, get_city, search_cities
 from app.interpret import interpret_chart, is_mock_mode
 from app.storage import load_chart, new_share_id, save_chart
+from app.transits import compute_transits
 
 app = FastAPI(title="AstroTruth API")
 
@@ -73,7 +74,9 @@ def create_chart(payload: ChartRequest) -> dict:
     chart = compute_chart(dt_utc, city.lat, city.lon)
     moon_longitude = chart.planets["Moon"].longitude
     dasha_sequence = vimshottari(moon_longitude, dt_utc)
-    current = current_dasha(dasha_sequence, datetime.now(timezone.utc))
+    now = datetime.now(timezone.utc)
+    current = current_dasha(dasha_sequence, now)
+    transits = compute_transits(chart.lagna_sign, chart.planets["Moon"].sign, now)
 
     share_id = new_share_id()
     response = {
@@ -88,6 +91,7 @@ def create_chart(payload: ChartRequest) -> dict:
             if current is not None
             else None
         ),
+        "transits": transits.model_dump(mode="json"),
     }
 
     save_chart(share_id, response)

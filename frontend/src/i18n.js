@@ -45,6 +45,10 @@ const DICT = {
     interpreting: 'Interpreting…',
     mockBadge: 'mock',
     interpretError: 'Could not generate an interpretation. Please try again.',
+    transits: 'Current transits',
+    fromLagna: 'from your Lagna',
+    fromMoon: 'from your Moon',
+    nextIngress: 'Next sign change',
   },
   ne: {
     appName: 'AstroTruth',
@@ -87,6 +91,10 @@ const DICT = {
     interpreting: 'व्याख्या गर्दै…',
     mockBadge: 'नमूना',
     interpretError: 'व्याख्या तयार गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
+    transits: 'हालको गोचर',
+    fromLagna: 'लग्नबाट',
+    fromMoon: 'चन्द्रमाबाट',
+    nextIngress: 'अर्को राशि परिवर्तन',
   },
 }
 
@@ -109,6 +117,20 @@ export const BS_MONTHS = {
 export const PLANET_ABBR = {
   Sun: 'Su', Moon: 'Mo', Mars: 'Ma', Mercury: 'Me',
   Jupiter: 'Ju', Venus: 'Ve', Saturn: 'Sa', Rahu: 'Ra', Ketu: 'Ke',
+}
+
+export const TRANSIT_PLANET_NAMES = {
+  en: { Jupiter: 'Jupiter', Saturn: 'Saturn' },
+  ne: { Jupiter: 'बृहस्पति', Saturn: 'शनि' },
+}
+
+// House ordinals 1..12, indexed [house - 1].
+export const HOUSE_ORDINALS = {
+  en: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'],
+  ne: [
+    'पहिलो', 'दोस्रो', 'तेस्रो', 'चौथो', 'पाँचौं', 'छैटौं',
+    'सातौं', 'आठौं', 'नवौं', 'दशौं', 'एघारौं', 'बाह्रौं',
+  ],
 }
 
 export const SIGN_NAMES = {
