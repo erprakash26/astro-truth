@@ -30,6 +30,12 @@ DISCLAIMER = (
     "Astrology is a traditional belief system, not a science. It describes "
     "tendencies, not certainties."
 )
+DISCLAIMER_NE = (
+    "ज्योतिषशास्त्र एक परम्परागत विश्वास प्रणाली हो, विज्ञान होइन। यसले "
+    "निश्चितता होइन, प्रवृत्तिहरू मात्र वर्णन गर्छ।"
+)
+
+PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
 
 
 def is_mock_mode() -> bool:
@@ -244,6 +250,490 @@ _MOCK_TEXT = {
 }
 
 
+def _is_reference_chart(chart_json: dict) -> bool:
+    """Fingerprint match for the Stage-1 reference chart (AD 2000-01-01
+    12:00, London): Aries lagna near 0.16 deg and Libra Moon near 19.47 deg.
+    Sign plus approximate degree together make a coincidental match on any
+    other real chart astronomically implausible."""
+    chart = chart_json.get("chart", {})
+    moon = chart.get("planets", {}).get("Moon", {})
+    return (
+        chart.get("lagna_sign_name") == "Aries"
+        and abs(chart.get("lagna_degrees_in_sign", -999) - 0.16) < 0.05
+        and moon.get("sign_name") == "Libra"
+        and abs(moon.get("degrees_in_sign", -999) - 19.47) < 0.1
+    )
+
+
+# --- Rule-based, chart-grounded generator for any non-reference chart -----
+#
+# The hand-written _MOCK_TEXT above is a single polished example authored
+# for the Stage-1 reference chart only. For any other chart it would state
+# facts (signs, houses, yogas) that don't match that chart's own data, which
+# defeats the point of a "grounded" mock. This generator instead builds the
+# same 5-section structure entirely from the given chart_json's own fields,
+# so mock mode stays factually grounded for arbitrary input. It is still a
+# deterministic template, not an LLM call — see backend/evals/EVALS.md.
+
+HEADINGS = {
+    "en": {
+        "lagna": "Lagna (Ascendant) character",
+        "yogas": "Notable yogas",
+        "dasha": "Current dasha meaning",
+        "strengths": "Strengths and cautions",
+        "transits": "Current transits (gochara)",
+    },
+    "ne": {
+        "lagna": "लग्न (उदय) चरित्र",
+        "yogas": "उल्लेखनीय योग",
+        "dasha": "हालको दशा",
+        "strengths": "बलहरू र सावधानीहरू",
+        "transits": "हालको गोचर (ट्रान्जिट)",
+    },
+}
+
+ORDINALS = {
+    "en": ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"],
+    "ne": [
+        "पहिलो", "दोस्रो", "तेस्रो", "चौथो", "पाँचौं", "छैटौं",
+        "सातौं", "आठौं", "नवौं", "दशौं", "एघारौं", "बाह्रौं",
+    ],
+}
+
+SIGN_NAME_NE = {
+    "Aries": "मेष", "Taurus": "वृष", "Gemini": "मिथुन", "Cancer": "कर्कट",
+    "Leo": "सिंह", "Virgo": "कन्या", "Libra": "तुला", "Scorpio": "वृश्चिक",
+    "Sagittarius": "धनु", "Capricorn": "मकर", "Aquarius": "कुम्भ", "Pisces": "मीन",
+}
+
+PLANET_NAME_NE = {
+    "Sun": "सूर्य", "Moon": "चन्द्रमा", "Mars": "मंगल", "Mercury": "बुध",
+    "Jupiter": "बृहस्पति", "Venus": "शुक्र", "Saturn": "शनि", "Rahu": "राहु", "Ketu": "केतु",
+}
+
+SIGN_TRAITS = {
+    "en": {
+        "Aries": "a placement associated with initiative, quick decisions, and a preference for setting the pace, ruled by fast-moving Mars",
+        "Taurus": "a placement associated with steadiness, patience, and a preference for comfort and security, ruled by Venus",
+        "Gemini": "a placement associated with curiosity, adaptability, and quick communication, ruled by Mercury",
+        "Cancer": "a placement associated with emotional depth, nurturing instincts, and a strong attachment to home, ruled by the Moon",
+        "Leo": "a placement associated with confidence, warmth, and a natural pull toward leadership, ruled by the Sun",
+        "Virgo": "a placement associated with precision, practicality, and a discerning eye for detail, ruled by Mercury",
+        "Libra": "a placement associated with balance, diplomacy, and a strong sense of fairness, ruled by Venus",
+        "Scorpio": "a placement associated with intensity, depth, and a talent for uncovering what's hidden, ruled by Mars",
+        "Sagittarius": "a placement associated with optimism, a love of learning, and a philosophical outlook, ruled by Jupiter",
+        "Capricorn": "a placement associated with discipline, ambition, and a patient, long-term approach, ruled by Saturn",
+        "Aquarius": "a placement associated with independence, original thinking, and a focus on community, ruled by Saturn",
+        "Pisces": "a placement associated with compassion, imagination, and a spiritual or intuitive bent, ruled by Jupiter",
+    },
+    "ne": {
+        "Aries": "छिटो निर्णय लिने, पहल गर्ने र आफैं गति निर्धारण गर्ने स्वभावको प्रतीक",
+        "Taurus": "स्थिरता, धैर्य र आराम तथा सुरक्षाप्रतिको रुचिको प्रतीक",
+        "Gemini": "जिज्ञासा, अनुकूलनशीलता र छिटो संचारको प्रतीक",
+        "Cancer": "भावनात्मक गहिराइ, स्नेहपूर्ण स्वभाव र घरप्रतिको लगावको प्रतीक",
+        "Leo": "आत्मविश्वास, न्यानोपन र नेतृत्वप्रतिको स्वाभाविक झुकावको प्रतीक",
+        "Virgo": "सूक्ष्मता, व्यावहारिकता र विवरणमा ध्यान दिने बानीको प्रतीक",
+        "Libra": "सन्तुलन, कूटनीति र निष्पक्षताको भावनाको प्रतीक",
+        "Scorpio": "गहनता, गहिराइ र लुकेको कुरा पत्ता लगाउने क्षमताको प्रतीक",
+        "Sagittarius": "आशावाद, ज्ञानप्रतिको रुचि र दार्शनिक दृष्टिकोणको प्रतीक",
+        "Capricorn": "अनुशासन, महत्वाकांक्षा र धैर्यपूर्ण दीर्घकालीन दृष्टिकोणको प्रतीक",
+        "Aquarius": "स्वतन्त्रता, मौलिक सोच र सामुदायिक चासोको प्रतीक",
+        "Pisces": "करुणा, कल्पनाशीलता र आध्यात्मिक वा सहज-ज्ञानको प्रतीक",
+    },
+}
+
+# Ruling planet per sign, for the Nepali lagna sentence's trailing clause
+# ("...jasalāī {planet}le śāsan garcha"). English keeps the ruling planet
+# inline within SIGN_TRAITS['en'] instead, since that reads naturally there.
+SIGN_RULER_NE = {
+    "Aries": "मंगल", "Taurus": "शुक्र", "Gemini": "बुध", "Cancer": "चन्द्रमा",
+    "Leo": "सूर्य", "Virgo": "बुध", "Libra": "शुक्र", "Scorpio": "मंगल",
+    "Sagittarius": "बृहस्पति", "Capricorn": "शनि", "Aquarius": "शनि", "Pisces": "बृहस्पति",
+}
+
+HOUSE_THEMES = {
+    "en": {
+        1: "self, appearance, and new beginnings", 2: "finances, family, and speech",
+        3: "courage, siblings, and short journeys", 4: "home, comfort, and inner peace",
+        5: "creativity, children, and intelligence", 6: "health, routine, and obstacles",
+        7: "partnerships and close relationships", 8: "transformation, shared resources, and the unknown",
+        9: "belief, higher learning, and long journeys", 10: "career and public standing",
+        11: "gains, aspirations, and social networks", 12: "rest, withdrawal, and letting go",
+    },
+    "ne": {
+        1: "आफू, रूपरंग र नयाँ सुरुवात", 2: "धन, परिवार र वाणी",
+        3: "साहस, दाजुभाइ-दिदीबहिनी र छोटो यात्रा", 4: "घर, आराम र आन्तरिक शान्ति",
+        5: "सिर्जनशीलता, सन्तान र बुद्धि", 6: "स्वास्थ्य, दिनचर्या र बाधा",
+        7: "साझेदारी र नजिकका सम्बन्ध", 8: "रूपान्तरण, साझा स्रोत र अज्ञात कुरा",
+        9: "विश्वास, उच्च शिक्षा र लामो यात्रा", 10: "करियर र सार्वजनिक प्रतिष्ठा",
+        11: "लाभ, आकांक्षा र सामाजिक सञ्जाल", 12: "विश्राम, त्याग र छोड्ने कुरा",
+    },
+}
+
+PLANET_DASHA_MEANING = {
+    "en": {
+        "Sun": "authority, self-expression, and public recognition",
+        "Moon": "emotional life, home, and the people closest to you",
+        "Mars": "courage, competition, and decisive action",
+        "Mercury": "communication, learning, and business dealings",
+        "Jupiter": "growth, wisdom, and good fortune",
+        "Venus": "relationships, comfort, and creative or material pleasures",
+        "Saturn": "patience and discipline, though it can feel slow if you're hoping for quick wins",
+        "Rahu": "ambition, unconventional opportunities, and a restless drive to acquire more",
+        "Ketu": "detachment, introspection, and spiritual matters",
+    },
+    "ne": {
+        "Sun": "अख्तियार, आत्म-अभिव्यक्ति र सार्वजनिक पहिचान",
+        "Moon": "भावनात्मक जीवन, घर र नजिकका मानिसहरू",
+        "Mars": "साहस, प्रतिस्पर्धा र निर्णायक कार्य",
+        "Mercury": "संचार, सिकाइ र व्यापारिक कारोबार",
+        "Jupiter": "वृद्धि, ज्ञान र सौभाग्य",
+        "Venus": "सम्बन्ध, आराम र रचनात्मक वा भौतिक आनन्द",
+        "Saturn": "धैर्य र अनुशासन, यद्यपि छिटो नतिजा खोज्नेका लागि यो ढिलो महसुस हुन सक्छ",
+        "Rahu": "महत्वाकांक्षा, अपरम्परागत अवसर र थप हासिल गर्ने बेचैन चाहना",
+        "Ketu": "वैराग्य, आत्मनिरीक्षण र आध्यात्मिक विषय",
+    },
+}
+
+
+def _ordinal(language: str, house: int) -> str:
+    ordinals = ORDINALS.get(language, ORDINALS["en"])
+    return ordinals[house - 1] if 1 <= house <= 12 else str(house)
+
+
+def _planet_label(name: str, language: str) -> str:
+    return PLANET_NAME_NE.get(name, name) if language == "ne" else name
+
+
+def _sign_label(sign_name: str, language: str) -> str:
+    return SIGN_NAME_NE.get(sign_name, sign_name) if language == "ne" else sign_name
+
+
+def _join_and(items: list[str], language: str) -> str:
+    if not items:
+        return ""
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} र {items[1]}" if language == "ne" else f"{items[0]} and {items[1]}"
+    head = ", ".join(items[:-1])
+    return f"{head} र {items[-1]}" if language == "ne" else f"{head}, and {items[-1]}"
+
+
+def _section_lagna(chart: dict, language: str) -> str:
+    lagna_sign = chart["lagna_sign_name"]
+    degrees = chart["lagna_degrees_in_sign"]
+    nakshatra = chart["lagna_nakshatra"]
+    trait = SIGN_TRAITS.get(language, SIGN_TRAITS["en"]).get(lagna_sign, SIGN_TRAITS["en"][lagna_sign])
+    house1 = [name for name in PLANET_ORDER if chart["planets"][name]["house"] == 1]
+    localized_house1 = [_planet_label(name, language) for name in house1]
+
+    if language == "ne":
+        sign_label = _sign_label(lagna_sign, language)
+        ruler = SIGN_RULER_NE.get(lagna_sign, "")
+        text = f"तपाईंको लग्न {sign_label} राशि हो, {degrees:.2f}° अंशमा {nakshatra} नक्षत्रसँग उदाउँदै। यो {trait} हो, जसलाई {ruler}ले शासन गर्छ।"
+        if localized_house1:
+            joined = _join_and(localized_house1, language)
+            text += f" यही पहिलो भावमा {joined} पनि विराजमान छन्, जुन ध्यान दिनुपर्ने कुरा हो।"
+        else:
+            text += " यस पहिलो भावमा अरू कुनै ग्रह छैनन्, त्यसैले लग्नकै आफ्नै गुण मुख्य रूपमा देखिन्छ।"
+        return text
+
+    text = f"Your lagna is {lagna_sign}, rising at {degrees:.2f}° in {nakshatra} nakshatra. This is {trait}."
+    if localized_house1:
+        joined = _join_and(localized_house1, language)
+        verb = "sits" if len(localized_house1) == 1 else "sit"
+        text += f" {joined} also {verb} in this first house, which is worth noting."
+    else:
+        text += " No other planet sits in this first house, so the lagna's own qualities take center stage."
+    return text
+
+
+def _section_yogas(chart: dict, language: str) -> str:
+    planets = chart["planets"]
+    moon_house = planets["Moon"]["house"]
+    jup_house = planets["Jupiter"]["house"]
+    sun_house = planets["Sun"]["house"]
+    merc_house = planets["Mercury"]["house"]
+    gajakesari = moon_house == jup_house
+    budhaditya = sun_house == merc_house
+
+    moon_sign = _sign_label(planets["Moon"]["sign_name"], language)
+    jup_sign = _sign_label(planets["Jupiter"]["sign_name"], language)
+    sun_sign = _sign_label(planets["Sun"]["sign_name"], language)
+    merc_sign = _sign_label(planets["Mercury"]["sign_name"], language)
+    moon_ord = _ordinal(language, moon_house)
+    jup_ord = _ordinal(language, jup_house)
+    sun_ord = _ordinal(language, sun_house)
+    merc_ord = _ordinal(language, merc_house)
+
+    if language == "ne":
+        if budhaditya and gajakesari:
+            return (
+                f"यस कुण्डलीमा दुई उल्लेखनीय योग देखिन्छन्। सूर्य र बुध तपाईंको {sun_ord} भाव, {sun_sign} राशिमा "
+                f"युति भएका छन्, जसले बुधादित्य योग बनाउँछ, जसले परम्परागत रूपमा बुद्धि र संचार क्षमतालाई तीक्ष्ण "
+                f"बनाउँछ। चन्द्रमा र बृहस्पति पनि तपाईंको {moon_ord} भाव, {moon_sign} राशिमा एउटै भावमा छन्, "
+                f"जसले गजकेसरी योग बनाउँछ, जुन परम्परागत रूपमा बुद्धिमत्ता, सम्मान र सौभाग्यसँग जोडिन्छ।"
+            )
+        if budhaditya:
+            return (
+                f"सूर्य र बुध तपाईंको {sun_ord} भाव, {sun_sign} राशिमा युति भएका छन्, जसले बुधादित्य योग बनाउँछ। "
+                f"यो संयोजनले परम्परागत रूपमा बुद्धि र संचार क्षमतालाई तीक्ष्ण बनाउँछ र दार्शनिक वा विद्वत्तापूर्ण "
+                f"झुकाउ ल्याउँछ। यस कुण्डलीमा गजकेसरी योग छैन: चन्द्रमा {moon_ord} भाव ({moon_sign}) मा र बृहस्पति "
+                f"{jup_ord} भाव ({jup_sign}) मा छन्, त्यसैले तिनीहरू एउटै भावमा छैनन्।"
+            )
+        if gajakesari:
+            return (
+                f"चन्द्रमा र बृहस्पति तपाईंको {moon_ord} भाव, {moon_sign} राशिमा एउटै भावमा छन्, जसले गजकेसरी योग "
+                f"बनाउँछ, जुन परम्परागत रूपमा बुद्धिमत्ता, धैर्य र सौभाग्यसँग जोडिन्छ। यस कुण्डलीमा बुधादित्य योग "
+                f"छैन: सूर्य {sun_ord} भाव ({sun_sign}) मा र बुध {merc_ord} भाव ({merc_sign}) मा छन्, त्यसैले "
+                f"तिनीहरू युति भएका छैनन्।"
+            )
+        return (
+            f"यस कुण्डलीमा गजकेसरी योग वा बुधादित्य योग कुनै पनि छैन। चन्द्रमा ({moon_ord} भाव, {moon_sign}) र "
+            f"बृहस्पति ({jup_ord} भाव, {jup_sign}) एउटै भावमा छैनन्, र सूर्य ({sun_ord} भाव, {sun_sign}) र बुध "
+            f"({merc_ord} भाव, {merc_sign}) पनि युति भएका छैनन्। यो कुण्डलीको स्वाभाविक बनोट मात्र हो, कुनै "
+            f"कमजोरी होइन।"
+        )
+
+    if budhaditya and gajakesari:
+        return (
+            f"Two notable yogas stand out in this chart. Sun and Mercury are conjunct in your {sun_ord} house, "
+            f"{sun_sign}, forming Budhaditya Yoga, which traditionally sharpens intellect and communication. "
+            f"Moon and Jupiter also share your {moon_ord} house, {moon_sign}, forming Gajakesari Yoga, "
+            f"traditionally associated with wisdom, respect, and good fortune."
+        )
+    if budhaditya:
+        return (
+            f"Sun and Mercury are conjunct in your {sun_ord} house, {sun_sign}, forming Budhaditya Yoga. This "
+            f"pairing traditionally sharpens intellect and communication and brings a philosophical or "
+            f"scholarly bent. No Gajakesari Yoga is present in this chart: Moon sits in the {moon_ord} house "
+            f"({moon_sign}) and Jupiter in the {jup_ord} house ({jup_sign}), so they aren't sharing a house."
+        )
+    if gajakesari:
+        return (
+            f"Moon and Jupiter share your {moon_ord} house, {moon_sign}, forming Gajakesari Yoga, traditionally "
+            f"associated with wisdom, resilience, and good fortune. No Budhaditya Yoga is present in this "
+            f"chart: Sun sits in the {sun_ord} house ({sun_sign}) and Mercury in the {merc_ord} house "
+            f"({merc_sign}), so they aren't conjunct."
+        )
+    return (
+        f"Neither Gajakesari Yoga nor Budhaditya Yoga is present in this chart. Moon ({moon_ord} house, "
+        f"{moon_sign}) and Jupiter ({jup_ord} house, {jup_sign}) aren't sharing a house, and Sun ({sun_ord} "
+        f"house, {sun_sign}) and Mercury ({merc_ord} house, {merc_sign}) aren't conjunct either. That's simply "
+        f"the natural shape of this chart, not a shortcoming."
+    )
+
+
+def _section_dasha(chart: dict, current_dasha: dict | None, language: str) -> str:
+    themes = PLANET_DASHA_MEANING.get(language, PLANET_DASHA_MEANING["en"])
+
+    if not current_dasha:
+        return (
+            "यस कुण्डलीको दशा समयरेखामा हाल कुनै सक्रिय अवधि छैन।"
+            if language == "ne"
+            else "This chart's dasha timeline doesn't currently have an active period in range."
+        )
+
+    maha_lord = current_dasha["mahadasha"]["lord"]
+    antar_lord = current_dasha["antardasha"]["lord"]
+    maha_planet = chart["planets"][maha_lord]
+    maha_sign = _sign_label(maha_planet["sign_name"], language)
+    maha_ord = _ordinal(language, maha_planet["house"])
+    maha_label = _planet_label(maha_lord, language)
+    antar_label = _planet_label(antar_lord, language)
+
+    dignity_note = None
+    if maha_planet["debilitated"]:
+        dignity_note = (
+            f"{maha_label} यहाँ नीच अवस्थामा छ, जसले थप आत्म-अनुशासनको पाठ थप्छ: यसको अर्थ बाहिरी प्रतिबन्ध "
+            f"भन्दा बढी यो ग्रहको स्वाभाविक प्रवृत्तिसँग सचेत रूपमा काम गर्न सिक्नु हो।"
+            if language == "ne"
+            else f"{maha_label} sits debilitated here, which adds a note of self-discipline: the lesson is "
+            f"less about external restriction and more about learning to work consciously with what this "
+            f"placement asks."
+        )
+    elif maha_planet["exalted"] or maha_planet["own_sign"] or maha_planet["moolatrikona"]:
+        dignity_note = (
+            f"{maha_label} यहाँ बलियो र सहज अवस्थामा छ, जसले यस अवधिका स्वाभाविक विषयवस्तुलाई समर्थन गर्छ।"
+            if language == "ne"
+            else f"{maha_label} sits in a strong, comfortable position here, which supports this period's "
+            f"natural themes."
+        )
+
+    if language == "ne":
+        text = (
+            f"हाल तपाईं {maha_label} महादशामा हुनुहुन्छ, {maha_label}–{antar_label} अन्तर्दशाभित्र। {maha_label} "
+            f"तपाईंको {maha_ord} भाव, {maha_sign} राशिमा छ। {maha_label} अवधिले परम्परागत रूपमा "
+            f"{themes[maha_lord]}मा ध्यान ल्याउँछ।"
+        )
+        if dignity_note:
+            text += f" {dignity_note}"
+        text += f" यसभित्र चलिरहेको {antar_label} अन्तर्दशाले {themes[antar_lord]} विषयलाई अगाडि ल्याउँछ।"
+        return text
+
+    text = (
+        f"You're currently running your {maha_label} mahadasha, in a {maha_label}–{antar_label} "
+        f"antardasha. {maha_label} sits in your {maha_ord} house, {maha_sign}. {maha_label} periods "
+        f"traditionally bring focus to {themes[maha_lord]}."
+    )
+    if dignity_note:
+        text += f" {dignity_note}"
+    text += (
+        f" The {antar_label} antardasha running within it brings {themes[antar_lord]} to the foreground for "
+        f"this stretch of time."
+    )
+    return text
+
+
+def _section_strengths_cautions(chart: dict, language: str) -> str:
+    planets = chart["planets"]
+    gajakesari = planets["Moon"]["house"] == planets["Jupiter"]["house"]
+    budhaditya = planets["Sun"]["house"] == planets["Mercury"]["house"]
+
+    strengths: list[str] = []
+    if budhaditya:
+        strengths.append(
+            "बुधादित्य योग (सूर्य–बुध युति)ले सामान्यतया आत्मविश्वासी, स्पष्ट सोच र शिक्षण, लेखन वा दार्शनिक "
+            "अन्वेषणतर्फको स्वाभाविक झुकावलाई समर्थन गर्छ"
+            if language == "ne"
+            else "Budhaditya Yoga (the Sun–Mercury conjunction) generally supports confident, articulate "
+            "thinking and a natural pull toward teaching, writing, or philosophical inquiry"
+        )
+    if gajakesari:
+        strengths.append(
+            "गजकेसरी योग (चन्द्रमा–बृहस्पति संयोजन)ले परम्परागत रूपमा बुद्धिमत्ता, स्थिरता र सौभाग्यलाई समर्थन "
+            "गर्छ"
+            if language == "ne"
+            else "Gajakesari Yoga (the Moon–Jupiter combination) traditionally supports wisdom, "
+            "steadiness, and good fortune"
+        )
+
+    for name in PLANET_ORDER:
+        p = planets[name]
+        label = _planet_label(name, language)
+        sign = _sign_label(p["sign_name"], language)
+        if p["exalted"]:
+            strengths.append(
+                f"{label} {sign} मा उच्च अवस्थामा छ, यसको सबैभन्दा आत्मविश्वासी र प्रभावकारी स्थिति"
+                if language == "ne"
+                else f"{label} is exalted in {sign}, its most confident and effective position"
+            )
+        elif p["own_sign"]:
+            strengths.append(
+                f"{label} {sign} मा स्वराशिमा छ, जहाँ यो सहज र आरामदायी रूपमा काम गर्छ"
+                if language == "ne"
+                else f"{label} is in its own sign in {sign}, operating comfortably and at home"
+            )
+        elif p["moolatrikona"]:
+            strengths.append(
+                f"{label} {sign} मा मूलत्रिकोणमा छ, यसको एक स्थिर र प्रभावकारी अवस्था"
+                if language == "ne"
+                else f"{label} is in moolatrikona in {sign}, one of its stable, effective positions"
+            )
+
+    cautions = [
+        (
+            f"{_planet_label(name, language)} को {_sign_label(planets[name]['sign_name'], language)} मा नीच "
+            f"अवस्थाले यसका स्वाभाविक गुण व्यक्त हुने तरिकामा केही घर्षण देखाउँछ, जसका लागि त्यस क्षेत्रमा अलि "
+            f"बढी सचेत प्रयास चाहिन्छ"
+            if language == "ne"
+            else f"{_planet_label(name, language)}'s debilitation in "
+            f"{_sign_label(planets[name]['sign_name'], language)} suggests some friction in how its natural "
+            f"qualities express, asking for a little more conscious effort in that area"
+        )
+        for name in PLANET_ORDER
+        if planets[name]["debilitated"]
+    ]
+
+    if language == "ne":
+        parts = []
+        if strengths:
+            parts.append(f"तपाईंको स्पष्ट बल: {'; '.join(strengths)}।")
+        else:
+            parts.append(
+                "यस कुण्डलीमा कुनै ग्रह उच्च, स्वराशि वा मूलत्रिकोणमा छैन, र माथि उल्लेख गरिएको कुनै प्रमुख योग "
+                "पनि छैन। यो कुण्डलीको सामान्य बनोट मात्र हो, चिन्ताको विषय होइन।"
+            )
+        if cautions:
+            parts.append(f"मुख्य सावधानी: {'; '.join(cautions)}।")
+        else:
+            parts.append("यस कुण्डलीमा कुनै ग्रह नीच छैन, जुन समग्रमा सहज अवस्था हो।")
+        return " ".join(parts)
+
+    parts = []
+    if strengths:
+        parts.append("Your clearest strengths: " + "; ".join(strengths) + ".")
+    else:
+        parts.append(
+            "No planet is exalted, in its own sign, or in moolatrikona in this chart, and neither yoga above "
+            "is present. That's an ordinary distribution, not a warning sign."
+        )
+    if cautions:
+        label = "caution" if len(cautions) == 1 else "cautions"
+        parts.append(f"The main {label} in this chart: " + "; ".join(cautions) + ".")
+    else:
+        parts.append("No planet is debilitated in this chart, which is a comfortable placement overall.")
+    return " ".join(parts)
+
+
+def _section_transits(transits: dict | None, language: str) -> str:
+    if not transits:
+        return (
+            "यस चार्टको लागि हालको गोचर डाटा उपलब्ध छैन।"
+            if language == "ne"
+            else "Current transit data isn't available for this chart."
+        )
+
+    themes = HOUSE_THEMES.get(language, HOUSE_THEMES["en"])
+    sentences = []
+    for key in ("jupiter", "saturn"):
+        planet = transits[key]
+        label = _planet_label(planet["name"], language)
+        sign = _sign_label(planet["sign_name"], language)
+        lagna_ord = _ordinal(language, planet["house_from_lagna"])
+        moon_ord = _ordinal(language, planet["house_from_moon"])
+        theme_lagna = themes[planet["house_from_lagna"]]
+        theme_moon = themes[planet["house_from_moon"]]
+        ingress_date = planet["next_ingress"][:10]
+
+        if language == "ne":
+            sentences.append(
+                f"{label} हाल {sign} राशिमा गोचर गर्दैछ, जुन तपाईंको लग्नबाट {lagna_ord} र चन्द्रमाबाट "
+                f"{moon_ord} भाव हो, जसले {theme_lagna} र {theme_moon}मा ध्यान ल्याउँछ। यो {ingress_date} "
+                f"तिर अर्को राशिमा सर्नेछ।"
+            )
+        else:
+            sentences.append(
+                f"{label} is currently transiting {sign}, your {lagna_ord} house from lagna and {moon_ord} "
+                f"house from your natal Moon, bringing attention to {theme_lagna} as well as {theme_moon}. It "
+                f"will move into the next sign around {ingress_date}."
+            )
+    return " ".join(sentences)
+
+
+def _generate_grounded_mock_text(chart_json: dict, language: str) -> str:
+    """Deterministic, template-based interpretation built entirely from the
+    given chart's own data. Used for any chart other than the Stage-1
+    reference chart, so mock mode stays genuinely grounded for arbitrary
+    input (see backend/evals)."""
+    chart = chart_json["chart"]
+    current_dasha = chart_json.get("current_dasha")
+    transits = chart_json.get("transits")
+    headings = HEADINGS.get(language, HEADINGS["en"])
+
+    sections = [
+        (headings["lagna"], _section_lagna(chart, language)),
+        (headings["yogas"], _section_yogas(chart, language)),
+        (headings["dasha"], _section_dasha(chart, current_dasha, language)),
+        (headings["strengths"], _section_strengths_cautions(chart, language)),
+        (headings["transits"], _section_transits(transits, language)),
+    ]
+    body = "\n\n".join(f"## {title}\n\n{text}" for title, text in sections)
+    disclaimer = DISCLAIMER_NE if language == "ne" else DISCLAIMER
+    return f"{body}\n\n{disclaimer}"
+
+
 def _log_mock_mode() -> None:
     print(
         "MOCK MODE: interpret_chart is returning a canned example "
@@ -251,13 +741,15 @@ def _log_mock_mode() -> None:
     )
 
 
-def _mock_full_text(language: str) -> str:
-    return _MOCK_TEXT.get(language, _MOCK_TEXT["en"])
+def _mock_full_text(chart_json: dict, language: str) -> str:
+    if _is_reference_chart(chart_json):
+        return _MOCK_TEXT.get(language, _MOCK_TEXT["en"])
+    return _generate_grounded_mock_text(chart_json, language)
 
 
-def _stream_mock(language: str) -> Iterator[str]:
+def _stream_mock(chart_json: dict, language: str) -> Iterator[str]:
     _log_mock_mode()
-    text = _mock_full_text(language)
+    text = _mock_full_text(chart_json, language)
     words = text.split(" ")
     for index, word in enumerate(words):
         yield word if index == 0 else " " + word
@@ -273,7 +765,7 @@ def interpret_chart(chart_json: dict, language: str = "en") -> Iterator[str]:
     Mode is controlled by the USE_MOCK_LLM env var (default: mock).
     """
     if is_mock_mode():
-        yield from _stream_mock(language)
+        yield from _stream_mock(chart_json, language)
     else:
         yield from _stream_real(chart_json, language)
 
@@ -286,5 +778,5 @@ def interpret_chart_text(chart_json: dict, language: str = "en") -> str:
     """
     if is_mock_mode():
         _log_mock_mode()
-        return _mock_full_text(language)
+        return _mock_full_text(chart_json, language)
     return _real_full_text(chart_json, language)
