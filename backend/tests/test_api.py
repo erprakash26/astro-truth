@@ -112,6 +112,29 @@ def test_get_chart_unknown_share_id_returns_404():
     assert response.status_code == 404
 
 
+def test_create_chart_without_name_defaults_to_none(reference_chart_response):
+    assert reference_chart_response["name"] is None
+
+
+def test_create_chart_with_name_round_trips():
+    response = client.post(
+        "/api/chart",
+        json={
+            "calendar": "AD",
+            "date": "2000-01-01",
+            "time": "12:00",
+            "city_id": "united-kingdom-london",
+            "name": "Priya",
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["name"] == "Priya"
+
+    fetched = client.get(f"/api/chart/{body['share_id']}").json()
+    assert fetched["name"] == "Priya"
+
+
 def test_create_chart_via_bs_calendar_matches_ad_equivalent(reference_chart_response):
     # BS 2056-09-17 == AD 2000-01-01 (see test_calendar.py)
     response = client.post(

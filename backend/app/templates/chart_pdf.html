@@ -2,7 +2,7 @@
 <html lang="{{ language }}">
 <head>
 <meta charset="utf-8" />
-<title>{{ labels.app_name }} — {{ labels.chart_title }}</title>
+<title>{{ labels.app_name }} — {{ chart_title }}</title>
 <style>
   @font-face {
     font-family: 'Noto Sans Devanagari';
@@ -35,6 +35,8 @@
   }
   .header h1 { color: #d4af37; }
   .header p { margin: 2px 0 0 0; font-size: 11px; color: #fbf3e0; }
+  .header-inner { display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 30px; height: 30px; flex-shrink: 0; }
 
   .lagna-box {
     background: #fbf3e0;
@@ -93,8 +95,25 @@
 <body>
 
   <div class="header">
-    <h1>{{ labels.app_name }}</h1>
-    <p>{{ labels.chart_title }}</p>
+    <div class="header-inner">
+      <svg class="logo-mark" viewBox="0 0 100 100" aria-label="AstroTruth logo">
+        <path
+          d="M50,8 L92,50 L50,92 L8,50 Z"
+          fill="none"
+          stroke="#d4af37"
+          stroke-width="7"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M50,34 L54.24,45.76 L66,50 L54.24,54.24 L50,66 L45.76,54.24 L34,50 L45.76,45.76 Z"
+          fill="#fffdf8"
+        />
+      </svg>
+      <div>
+        <h1>{{ labels.app_name }}</h1>
+        <p>{{ chart_title }}</p>
+      </div>
+    </div>
   </div>
 
   <div class="section lagna-box">

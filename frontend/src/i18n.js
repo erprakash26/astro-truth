@@ -1,12 +1,28 @@
 export const LANGUAGES = {
   en: 'English',
   ne: 'नेपाली',
+  other: 'Other',
+}
+
+// Basic sanity check for a free-typed language name: non-empty, letters in
+// any script plus spaces/hyphens/apostrophes only (so "Tamil", "Français",
+// "தமிழ்" all pass), within a reasonable length. Anything else — empty,
+// numbers, symbols — is nonsense we won't forward to the LLM; callers
+// should fall back to English when this returns null.
+const CUSTOM_LANGUAGE_PATTERN = /^[\p{L}\s'-]{2,40}$/u
+
+export function validateCustomLanguage(input) {
+  const trimmed = (input ?? '').trim()
+  if (!CUSTOM_LANGUAGE_PATTERN.test(trimmed)) return null
+  return trimmed
 }
 
 const DICT = {
   en: {
     appName: 'AstroTruth',
     tagline: 'Your Vedic birth chart, precisely computed.',
+    name: 'Name (optional)',
+    namePlaceholder: 'e.g. Priya',
     calendar: 'Calendar',
     ad: 'AD',
     bs: 'BS',
@@ -52,10 +68,15 @@ const DICT = {
     downloadPdf: 'Download PDF',
     downloadingPdf: 'Generating PDF…',
     downloadError: 'Could not generate the PDF. Please try again.',
+    langOther: 'Other',
+    langOtherPlaceholder: 'Type a language, e.g. Spanish',
+    langOtherInvalid: 'Could not recognize that language — falling back to English.',
   },
   ne: {
     appName: 'AstroTruth',
     tagline: 'तपाईंको ज्योतिष जन्मकुण्डली, सटीक गणना सहित।',
+    name: 'नाम (वैकल्पिक)',
+    namePlaceholder: 'जस्तै: प्रिया',
     calendar: 'पात्रो',
     ad: 'ईस्वी',
     bs: 'विक्रम सम्वत',
@@ -101,11 +122,21 @@ const DICT = {
     downloadPdf: 'PDF डाउनलोड गर्नुहोस्',
     downloadingPdf: 'PDF तयार गर्दै…',
     downloadError: 'PDF तयार गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
+    langOther: 'Other',
+    langOtherPlaceholder: 'Type a language, e.g. Spanish',
+    langOtherInvalid: 'Could not recognize that language — falling back to English.',
   },
 }
 
 export function t(lang, key) {
   return DICT[lang]?.[key] ?? DICT.en[key] ?? key
+}
+
+// Named heading ("Priya's Kundali Chart"), falling back to the generic
+// localized title when no name was given.
+export function chartTitle(lang, name) {
+  if (!name) return t(lang, 'chart')
+  return lang === 'ne' ? `${name} को कुण्डली चक्र` : `${name}'s Kundali Chart`
 }
 
 // Nepali month names (Baishakh..Chaitra), used for BS date entry.

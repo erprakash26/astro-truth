@@ -6,11 +6,11 @@ import pytest
 
 from app.dasha import current_dasha, vimshottari
 from app.engine import compute_chart, local_time_to_utc
-from app.pdf import render_chart_pdf
+from app.pdf import render_chart_html, render_chart_pdf
 from app.transits import compute_transits
 
 
-def _build_reference_stored() -> dict:
+def _build_reference_stored(name: str | None = None) -> dict:
     dt_utc = local_time_to_utc(datetime(2000, 1, 1, 12, 0, 0), "Europe/London")
     chart = compute_chart(dt_utc, lat=51.5074, lon=-0.1278)
     moon_longitude = chart.planets["Moon"].longitude
@@ -20,6 +20,7 @@ def _build_reference_stored() -> dict:
     transits = compute_transits(chart.lagna_sign, chart.planets["Moon"].sign, now)
     return {
         "share_id": "test-reference",
+        "name": name,
         "chart": chart.model_dump(mode="json"),
         "dasha_timeline": [period.model_dump(mode="json") for period in dasha_sequence],
         "current_dasha": (
@@ -106,3 +107,36 @@ def test_pdf_has_multiple_pages(reference_stored):
     # Footer disclaimer must repeat on every page, not just the first.
     for page in doc:
         assert "not a science" in page.get_text()
+
+
+def test_pdf_title_falls_back_to_generic_without_name(reference_stored):
+    text = _extract_text(_render(reference_stored, "en"))
+    assert "Kundali Chart" in text
+
+
+def test_pdf_title_uses_name_when_present_english():
+    stored = _build_reference_stored(name="Priya")
+    text = _extract_text(_render(stored, "en"))
+    assert "Priya's Kundali Chart" in text
+
+
+def test_pdf_title_uses_name_when_present_nepali():
+    stored = _build_reference_stored(name="Priya")
+    text = _extract_text(_render(stored, "ne"))
+    assert "Priya" in text
+    assert "कुण्डली चक्र" in text
+
+
+def test_pdf_header_includes_logo_mark(reference_stored):
+    html = render_chart_html(reference_stored, "en")
+    assert 'class="logo-mark"' in html
+    # Same diamond-outline path used in the web header/favicon.
+    assert "M50,8 L92,50 L50,92 L8,50 Z" in html
+
+
+def test_pdf_interpretation_falls_back_for_unsupported_language(reference_stored):
+    # Mock mode has no pre-written text for arbitrary languages; the PDF's
+    # interpretation section should say so plainly rather than mistranslate.
+    text = _extract_text(_render(reference_stored, "Spanish"))
+    assert "requires live mode" in text
+    assert "Spanish" in text

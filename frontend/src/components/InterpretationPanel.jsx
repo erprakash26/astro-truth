@@ -20,7 +20,7 @@ function renderFormatted(text) {
   })
 }
 
-export default function InterpretationPanel({ lang, shareId }) {
+export default function InterpretationPanel({ lang, contentLanguage, shareId }) {
   const [mockLlm, setMockLlm] = useState(null)
   const [status, setStatus] = useState('idle') // idle | streaming | done | error
   const [text, setText] = useState('')
@@ -44,7 +44,7 @@ export default function InterpretationPanel({ lang, shareId }) {
 
     streamInterpretation({
       shareId,
-      language: lang,
+      language: contentLanguage,
       signal: controller.signal,
       onChunk: (chunk) => setText((prev) => prev + chunk),
       onDone: () => setStatus('done'),

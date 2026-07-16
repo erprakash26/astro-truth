@@ -5,10 +5,10 @@ import DashaTimeline from './DashaTimeline'
 import TransitsCard from './TransitsCard'
 import InterpretationPanel from './InterpretationPanel'
 import { downloadChartPdf } from '../api'
-import { t, SIGN_NAMES } from '../i18n'
+import { t, chartTitle, SIGN_NAMES } from '../i18n'
 
-export default function ResultsPage({ lang, result, onReset }) {
-  const { share_id: shareId, chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha, transits } = result
+export default function ResultsPage({ lang, contentLanguage, result, onReset }) {
+  const { share_id: shareId, name, chart, dasha_timeline: dashaTimeline, current_dasha: currentDasha, transits } = result
   const [downloading, setDownloading] = useState(false)
   const [downloadError, setDownloadError] = useState(null)
 
@@ -16,7 +16,7 @@ export default function ResultsPage({ lang, result, onReset }) {
     setDownloading(true)
     setDownloadError(null)
     try {
-      await downloadChartPdf({ shareId, language: lang })
+      await downloadChartPdf({ shareId, language: contentLanguage })
     } catch (err) {
       setDownloadError(err.message || t(lang, 'downloadError'))
     } finally {
@@ -27,7 +27,9 @@ export default function ResultsPage({ lang, result, onReset }) {
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-serif text-2xl font-bold text-maroon-700">{t(lang, 'chart')}</h1>
+        <h1 className="font-serif text-2xl font-bold text-maroon-700" data-testid="chart-heading">
+          {chartTitle(lang, name)}
+        </h1>
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -82,7 +84,7 @@ export default function ResultsPage({ lang, result, onReset }) {
       </section>
 
       <section>
-        <InterpretationPanel lang={lang} shareId={shareId} />
+        <InterpretationPanel lang={lang} contentLanguage={contentLanguage} shareId={shareId} />
       </section>
     </div>
   )

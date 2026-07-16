@@ -138,6 +138,15 @@ def _dignity_label(language: str, planet: dict) -> str | None:
     return None
 
 
+def _chart_title(language: str, name: str | None) -> str:
+    labels = LABELS.get(language, LABELS["en"])
+    if not name:
+        return labels["chart_title"]
+    if language == "ne":
+        return f"{name} को कुण्डली चक्र"
+    return f"{name}'s Kundali Chart"
+
+
 def _parse_interpretation(text: str) -> list[dict]:
     """Split "## heading" / paragraph lines into renderable blocks."""
     blocks: list[dict] = []
@@ -226,6 +235,7 @@ def render_chart_html(stored: dict, language: str) -> str:
     return template.render(
         language=language,
         labels=LABELS.get(language, LABELS["en"]),
+        chart_title=_chart_title(language, stored.get("name")),
         font_data_uri=_font_data_uri(),
         lagna_sign_name=_sign_name(language, chart["lagna_sign"]),
         chart=chart,

@@ -43,8 +43,24 @@ def is_mock_mode() -> bool:
     return os.environ.get("USE_MOCK_LLM", "true").strip().lower() != "false"
 
 
-def _system_prompt(language: str) -> str:
-    language_name = LANGUAGE_NAMES.get(language, "English")
+def _name_instruction(name: str | None) -> str:
+    if name:
+        return (
+            f'The chart JSON includes a "name" field: "{name}". You may address '
+            "this person by name where it feels natural, but never fabricate or "
+            "guess a name if this field is absent."
+        )
+    return (
+        'The chart JSON has no "name" field for this person. Do not invent or '
+        "guess a name — address them generically."
+    )
+
+
+def _system_prompt(language: str, name: str | None = None) -> str:
+    # Anything outside our two hand-translated languages is still a valid
+    # request in real mode: pass the requested language name straight
+    # through rather than silently defaulting to English.
+    language_name = LANGUAGE_NAMES.get(language, language)
     return f"""You are a Vedic astrology interpreter for AstroTruth.
 
 You are given a pre-computed Vedic chart as JSON. You MUST NOT compute,
@@ -52,6 +68,8 @@ assume, or invent any planetary position, dignity, or dasha date. Every
 astrological claim you make must reference only the data provided in the
 JSON — do not recompute or second-guess it, and do not introduce placements,
 yogas, or dates that are not directly derivable from the given fields.
+
+{_name_instruction(name)}
 
 Structure your interpretation into these sections, in this order, each
 under its own heading written as "## <title>":
@@ -115,7 +133,7 @@ def _stream_real(chart_json: dict, language: str) -> Iterator[str]:
     with client.messages.stream(
         model=MODEL,
         max_tokens=MAX_TOKENS,
-        system=_system_prompt(language),
+        system=_system_prompt(language, chart_json.get("name")),
         messages=[{"role": "user", "content": _user_prompt(chart_json)}],
     ) as stream:
         yield from stream.text_stream
@@ -129,7 +147,7 @@ def _real_full_text(chart_json: dict, language: str) -> str:
     response = client.messages.create(
         model=MODEL,
         max_tokens=MAX_TOKENS,
-        system=_system_prompt(language),
+        system=_system_prompt(language, chart_json.get("name")),
         messages=[{"role": "user", "content": _user_prompt(chart_json)}],
     )
     return "".join(block.text for block in response.content if block.type == "text")
@@ -248,6 +266,32 @@ _MOCK_TEXT = {
         "होइन। यसले निश्चितता होइन, प्रवृत्तिहरू मात्र वर्णन गर्छ।"
     ),
 }
+
+
+def _mock_greeting(name: str | None, language: str) -> str:
+    """Simple template substitution: greet by name if one was given, in
+    whichever of our two hand-translated languages is active. Never
+    fabricates a name — returns "" (no greeting line) when absent."""
+    if not name:
+        return ""
+    if language == "ne":
+        return f"नमस्ते {name}, तपाईंको कुण्डलीको व्याख्या यहाँ छ।"
+    return f"Hi {name}, here's what your chart shows."
+
+
+def _mock_unsupported_language_note(chart_json: dict, language: str) -> str:
+    """Mock mode only has hand-written text for English and Nepali. Rather
+    than mistranslate or silently fall back to English content, say so
+    plainly — a generic templated note, not a fabricated interpretation."""
+    greeting = _mock_greeting(chart_json.get("name"), "en")
+    intro = f"{greeting} " if greeting else ""
+    return (
+        "## Note\n\n"
+        f"{intro}An interpretation in {language} requires live mode — mock mode "
+        "only has pre-written text for English and Nepali. Set USE_MOCK_LLM=false "
+        f"with a configured Anthropic API key to get a real interpretation in {language}.\n\n"
+        f"{DISCLAIMER}"
+    )
 
 
 def _is_reference_chart(chart_json: dict) -> bool:
@@ -742,9 +786,16 @@ def _log_mock_mode() -> None:
 
 
 def _mock_full_text(chart_json: dict, language: str) -> str:
-    if _is_reference_chart(chart_json):
-        return _MOCK_TEXT.get(language, _MOCK_TEXT["en"])
-    return _generate_grounded_mock_text(chart_json, language)
+    if language not in ("en", "ne"):
+        return _mock_unsupported_language_note(chart_json, language)
+
+    body = (
+        _MOCK_TEXT[language]
+        if _is_reference_chart(chart_json)
+        else _generate_grounded_mock_text(chart_json, language)
+    )
+    greeting = _mock_greeting(chart_json.get("name"), language)
+    return f"{greeting}\n\n{body}" if greeting else body
 
 
 def _stream_mock(chart_json: dict, language: str) -> Iterator[str]:

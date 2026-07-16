@@ -50,6 +50,7 @@ class ChartRequest(BaseModel):
     date: str
     time: str
     city_id: str
+    name: str | None = None
 
 
 @app.get("/api/cities")
@@ -91,6 +92,7 @@ def create_chart(payload: ChartRequest) -> dict:
     share_id = new_share_id()
     response = {
         "share_id": share_id,
+        "name": payload.name,
         "chart": chart.model_dump(mode="json"),
         "dasha_timeline": [period.model_dump(mode="json") for period in dasha_sequence],
         "current_dasha": (

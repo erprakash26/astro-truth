@@ -8,11 +8,11 @@ export async function searchCities(query) {
   return res.json()
 }
 
-export async function createChart({ calendar, date, time, cityId }) {
+export async function createChart({ calendar, date, time, cityId, name }) {
   const res = await fetch(new URL('/api/chart', BASE_URL), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ calendar, date, time, city_id: cityId }),
+    body: JSON.stringify({ calendar, date, time, city_id: cityId, name: name || null }),
   })
   if (!res.ok) {
     const detail = await res.json().catch(() => null)

@@ -10,6 +10,7 @@ function range(start, end) {
 }
 
 export default function BirthForm({ lang, onSubmit, submitting, error }) {
+  const [name, setName] = useState('')
   const [calendarType, setCalendarType] = useState('AD')
   const [adDate, setAdDate] = useState('2000-01-01')
   const [bsYear, setBsYear] = useState(2056)
@@ -38,13 +39,25 @@ export default function BirthForm({ lang, onSubmit, submitting, error }) {
       return
     }
 
-    onSubmit({ calendar: calendarType, date, time, cityId: city.id })
+    onSubmit({ calendar: calendarType, date, time, cityId: city.id, name: name.trim() || null })
   }
 
   const displayError = localError ?? error
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" data-testid="birth-form">
+      <label className="block">
+        <span className="mb-1 block text-sm font-medium text-maroon-600">{t(lang, 'name')}</span>
+        <input
+          type="text"
+          className="w-full rounded-md border border-maroon-100 bg-cream-50 px-3 py-2 text-maroon-700 focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-400/40"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t(lang, 'namePlaceholder')}
+          data-testid="name-input"
+        />
+      </label>
+
       <div>
         <span className="mb-1 block text-sm font-medium text-maroon-600">{t(lang, 'calendar')}</span>
         <div className="inline-flex overflow-hidden rounded-md border border-maroon-100">
