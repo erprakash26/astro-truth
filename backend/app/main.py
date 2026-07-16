@@ -16,6 +16,7 @@ from slowapi.util import get_remote_address
 load_dotenv()
 
 from app.calendar import CalendarError, bs_to_ad
+from app.chat import chat_reply
 from app.dasha import current_dasha, vimshottari
 from app.engine import compute_chart, local_time_to_utc
 from app.geocode import City, get_city, search_cities
@@ -176,3 +177,25 @@ async def get_chart_pdf(request: Request, share_id: str, language: str = "en") -
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="astrotruth-{share_id}.pdf"'},
     )
+
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
+class ChatPayload(BaseModel):
+    message: str
+    history: list[ChatMessage] = []
+
+
+@app.post("/api/chart/{share_id}/chat")
+@limiter.limit(RATE_LIMIT)
+def chat_with_chart(request: Request, share_id: str, payload: ChatPayload) -> dict:
+    stored = load_chart(share_id)
+    if stored is None:
+        raise HTTPException(status_code=404, detail=f"Chart not found: {share_id}")
+
+    history = [{"role": turn.role, "content": turn.content} for turn in payload.history]
+    reply = chat_reply(stored, payload.message, history)
+    return {"reply": reply}

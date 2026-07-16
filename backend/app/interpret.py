@@ -115,7 +115,8 @@ def _user_prompt(chart_json: dict) -> str:
     )
 
 
-def _require_api_key() -> str:
+def require_api_key() -> str:
+    """Shared with app.chat's real-mode tool-use loop."""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
         raise RuntimeError(
@@ -128,7 +129,7 @@ def _require_api_key() -> str:
 def _stream_real(chart_json: dict, language: str) -> Iterator[str]:
     import anthropic
 
-    client = anthropic.Anthropic(api_key=_require_api_key())
+    client = anthropic.Anthropic(api_key=require_api_key())
 
     with client.messages.stream(
         model=MODEL,
@@ -142,7 +143,7 @@ def _stream_real(chart_json: dict, language: str) -> Iterator[str]:
 def _real_full_text(chart_json: dict, language: str) -> str:
     import anthropic
 
-    client = anthropic.Anthropic(api_key=_require_api_key())
+    client = anthropic.Anthropic(api_key=require_api_key())
 
     response = client.messages.create(
         model=MODEL,
@@ -493,14 +494,39 @@ def _section_lagna(chart: dict, language: str) -> str:
     return text
 
 
+def detect_yogas(chart: dict) -> list[dict]:
+    """Yogas present in this chart. Shared with app.chat_tools's get_yogas
+    tool, so the mock/real interpretation and the chat tool always agree."""
+    planets = chart["planets"]
+    yogas = []
+    if planets["Moon"]["house"] == planets["Jupiter"]["house"]:
+        yogas.append(
+            {
+                "name": "Gajakesari Yoga",
+                "planets": ["Moon", "Jupiter"],
+                "house": planets["Moon"]["house"],
+            }
+        )
+    if planets["Sun"]["house"] == planets["Mercury"]["house"]:
+        yogas.append(
+            {
+                "name": "Budhaditya Yoga",
+                "planets": ["Sun", "Mercury"],
+                "house": planets["Sun"]["house"],
+            }
+        )
+    return yogas
+
+
 def _section_yogas(chart: dict, language: str) -> str:
     planets = chart["planets"]
     moon_house = planets["Moon"]["house"]
     jup_house = planets["Jupiter"]["house"]
     sun_house = planets["Sun"]["house"]
     merc_house = planets["Mercury"]["house"]
-    gajakesari = moon_house == jup_house
-    budhaditya = sun_house == merc_house
+    yoga_names = {y["name"] for y in detect_yogas(chart)}
+    gajakesari = "Gajakesari Yoga" in yoga_names
+    budhaditya = "Budhaditya Yoga" in yoga_names
 
     moon_sign = _sign_label(planets["Moon"]["sign_name"], language)
     jup_sign = _sign_label(planets["Jupiter"]["sign_name"], language)
@@ -632,8 +658,9 @@ def _section_dasha(chart: dict, current_dasha: dict | None, language: str) -> st
 
 def _section_strengths_cautions(chart: dict, language: str) -> str:
     planets = chart["planets"]
-    gajakesari = planets["Moon"]["house"] == planets["Jupiter"]["house"]
-    budhaditya = planets["Sun"]["house"] == planets["Mercury"]["house"]
+    yoga_names = {y["name"] for y in detect_yogas(chart)}
+    gajakesari = "Gajakesari Yoga" in yoga_names
+    budhaditya = "Budhaditya Yoga" in yoga_names
 
     strengths: list[str] = []
     if budhaditya:

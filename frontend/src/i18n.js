@@ -71,6 +71,13 @@ const DICT = {
     langOther: 'Other',
     langOtherPlaceholder: 'Type a language, e.g. Spanish',
     langOtherInvalid: 'Could not recognize that language — falling back to English.',
+    chatTitle: 'Ask about your chart',
+    chatMockNote: 'Mock mode only understands a few question patterns — try one of the examples below. Full conversational chat requires live mode.',
+    chatPlaceholder: 'Ask a question about your chart…',
+    chatPlaceholderMock: 'Try: "What sign is my Moon in?" / "Any yogas?" / "What\'s my dasha on 2030-01-01?"',
+    chatSend: 'Send',
+    chatSending: 'Sending…',
+    chatError: 'Could not get a reply. Please try again.',
   },
   ne: {
     appName: 'AstroTruth',
@@ -125,6 +132,16 @@ const DICT = {
     langOther: 'Other',
     langOtherPlaceholder: 'Type a language, e.g. Spanish',
     langOtherInvalid: 'Could not recognize that language — falling back to English.',
+    chatTitle: 'आफ्नो कुण्डलीबारे सोध्नुहोस्',
+    // The mock-mode pattern matcher only understands English question
+    // shapes, so its note and examples stay English regardless of UI
+    // language — asking in Nepali wouldn't match the patterns anyway.
+    chatMockNote: 'Mock mode only understands a few question patterns — try one of the examples below. Full conversational chat requires live mode.',
+    chatPlaceholder: 'Ask a question about your chart…',
+    chatPlaceholderMock: 'Try: "What sign is my Moon in?" / "Any yogas?" / "What\'s my dasha on 2030-01-01?"',
+    chatSend: 'पठाउनुहोस्',
+    chatSending: 'पठाउँदै…',
+    chatError: 'जवाफ प्राप्त गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
   },
 }
 

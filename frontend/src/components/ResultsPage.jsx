@@ -4,6 +4,7 @@ import PlanetTable from './PlanetTable'
 import DashaTimeline from './DashaTimeline'
 import TransitsCard from './TransitsCard'
 import InterpretationPanel from './InterpretationPanel'
+import ChatPanel from './ChatPanel'
 import { downloadChartPdf } from '../api'
 import { t, chartTitle, SIGN_NAMES } from '../i18n'
 
@@ -85,6 +86,10 @@ export default function ResultsPage({ lang, contentLanguage, result, onReset }) 
 
       <section>
         <InterpretationPanel lang={lang} contentLanguage={contentLanguage} shareId={shareId} />
+      </section>
+
+      <section>
+        <ChatPanel lang={lang} shareId={shareId} />
       </section>
     </div>
   )

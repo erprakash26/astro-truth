@@ -27,6 +27,19 @@ export async function getConfig() {
   return res.json()
 }
 
+export async function chatWithChart({ shareId, message, history }) {
+  const res = await fetch(new URL(`/api/chart/${shareId}/chat`, BASE_URL), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, history }),
+  })
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `Chat request failed: ${res.status}`)
+  }
+  return res.json()
+}
+
 export async function downloadChartPdf({ shareId, language }) {
   const url = new URL(`/api/chart/${shareId}/pdf`, BASE_URL)
   url.searchParams.set('language', language)
