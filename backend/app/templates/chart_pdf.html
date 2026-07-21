@@ -13,7 +13,7 @@
   * { box-sizing: border-box; }
 
   body {
-    font-family: {{ "'Noto Sans Devanagari', " if language == 'ne' else "" }}Georgia, 'Times New Roman', serif;
+    font-family: {{ ("'Noto Sans Devanagari', " if language == 'ne' else "") | safe }}Georgia, 'Times New Roman', serif;
     color: #3f0f15;
     margin: 0;
     padding: 0;
@@ -21,7 +21,7 @@
     line-height: 1.5;
   }
 
-  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; color: #6b1a24; margin: 0 0 8px 0; }
+  h1, h2, h3 { font-family: inherit; color: #6b1a24; margin: 0 0 8px 0; }
   h1 { font-size: 22px; }
   h2 { font-size: 15px; margin-top: 22px; border-bottom: 1px solid #d4af3766; padding-bottom: 4px; }
   h3 { font-size: 13px; margin-top: 14px; }

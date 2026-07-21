@@ -59,15 +59,25 @@ def _extract_text(pdf_bytes: bytes) -> str:
 _DEVANAGARI_COMBINING_MARKS = "ऀ-ःऺ-्॑-ॗॢॣ"
 
 
-def _collapse_duplicate_marks(text: str) -> str:
-    """pymupdf's text layer for this Devanagari font sometimes doubles a
-    dependent vowel sign / anusvara on extraction (e.g. "व्याख्या" comes back
-    as "व्यााख्याा") even though the glyph is rendered once -- a known
-    extraction quirk of this font+library combination, not a rendering bug.
-    Collapse runs of a repeated *combining mark* only (not base consonants,
-    which can legitimately repeat, e.g. "निश्चितता") so text assertions
-    aren't coupled to that quirk."""
-    return re.sub(rf"([{_DEVANAGARI_COMBINING_MARKS}])\1+", r"\1", text)
+def _normalize_extraction_quirks(text: str) -> str:
+    """pymupdf's text layer for this Devanagari font has two known
+    extraction quirks -- confirmed via rendered-pixel screenshots to not be
+    real rendering bugs, just glyph<->Unicode round-tripping noise in this
+    font+library combination:
+
+    - A dependent vowel sign / anusvara sometimes doubles on extraction
+      (e.g. "व्याख्या" comes back as "व्यााख्याा").
+    - A "reph" (ra + virama forming the diacritic-like mark reordered above
+      the following consonant, e.g. in "अन्तर्दशा" or "कर्कट") sometimes
+      drops from the extracted text entirely.
+
+    Collapse runs of a repeated *combining mark* (not base consonants,
+    which can legitimately repeat, e.g. "निश्चितता") and strip reph
+    sequences from both sides of a comparison so text assertions aren't
+    coupled to either quirk."""
+    text = re.sub(rf"([{_DEVANAGARI_COMBINING_MARKS}])\1+", r"\1", text)
+    text = text.replace("र्", "")
+    return text
 
 
 def test_english_pdf_is_non_blank_and_contains_expected_text(reference_stored):
@@ -108,10 +118,14 @@ def test_nepali_pdf_is_non_blank_and_contains_expected_text(reference_stored):
 
     # Same antardasha breakdown, localized: lord names stay in English (as
     # stored in the API data) but the "Antardasha"/"Current" labels localize.
+    # "अन्तर्दशा" contains a reph ("र्"), which pymupdf sometimes drops on
+    # extraction for this font (see _normalize_extraction_quirks) -- compare
+    # normalized text against a normalized expectation.
     current = reference_stored["current_dasha"]
     maha_lord = current["mahadasha"]["lord"]
     antar_lord = current["antardasha"]["lord"]
-    assert f"{maha_lord}–{antar_lord} अन्तर्दशा" in text
+    normalized_text = _normalize_extraction_quirks(text)
+    assert _normalize_extraction_quirks(f"{maha_lord}–{antar_lord} अन्तर्दशा") in normalized_text
     assert "हालको" in text  # हालको ("Current")
 
 
@@ -140,6 +154,34 @@ def test_pdf_title_uses_name_when_present_nepali():
     text = _extract_text(_render(stored, "ne"))
     assert "Priya" in text
     assert "कुण्डली चक्र" in text
+
+
+def test_pdf_html_devanagari_font_family_is_not_html_escaped(reference_stored):
+    # Regression test for a bug where Jinja's autoescaping turned the
+    # font-family declaration's quotes into HTML entities (&#39;) inside the
+    # <style> block. <style> is a "raw text" element per the HTML spec, so
+    # browsers don't decode entities there -- the CSS parser saw a garbage
+    # token instead of 'Noto Sans Devanagari' and silently fell through to
+    # the Georgia/serif fallback, which has no Devanagari glyphs. This
+    # rendered fine on some Chromium builds/platforms (tolerant parsing) and
+    # produced fully blank Devanagari text on others (observed on Render's
+    # Linux container) -- a rendered-PDF pixel/text assertion alone can pass
+    # on one platform while the bug is still live on another, so this
+    # asserts on the generated CSS text directly instead.
+    html = render_chart_html(reference_stored, "ne")
+    assert "&#39;Noto Sans Devanagari&#39;" not in html
+    assert "'Noto Sans Devanagari', Georgia" in html
+
+
+def test_pdf_html_headings_use_devanagari_font_for_nepali(reference_stored):
+    # Regression test: h1/h2/h3 used to hardcode their own font-family
+    # stack (Georgia/Times/serif) that never included the Devanagari font at
+    # all, so every heading -- the chart title, "Lagna", "Current transits",
+    # every interpretation section heading -- rendered blank in Nepali
+    # regardless of the escaping bug above. Headings must inherit body's
+    # font stack instead of declaring their own.
+    html = render_chart_html(reference_stored, "ne")
+    assert "h1, h2, h3 { font-family: inherit" in html
 
 
 def test_pdf_header_includes_logo_mark(reference_stored):
@@ -195,17 +237,17 @@ def test_nepali_pdf_for_non_reference_chart_is_non_blank_and_contains_expected_t
     assert pdf_bytes[:4] == b"%PDF"
 
     doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
-    text = _collapse_duplicate_marks("\n".join(page.get_text() for page in doc))
+    text = _normalize_extraction_quirks("\n".join(page.get_text() for page in doc))
 
     # Static labels (not chart-derived) -- these must never render blank,
     # regardless of which chart or LLM code path produced the interpretation.
     assert "कुण्डली चक्र" in text  # chart title
     assert "लग्न" in text  # "Lagna" heading
     assert "हालको गोचर" in text  # "Current transits" heading
-    assert "विंशोत्तरी दशा समयरेखा" in text  # dasha timeline heading
+    assert _normalize_extraction_quirks("विंशोत्तरी दशा समयरेखा") in text  # dasha timeline heading
     assert "व्याख्या" in text  # "Interpretation" heading
 
     # Chart-grounded interpretation body (from _generate_grounded_mock_text,
     # the non-reference-chart code path) must also be present, not blank.
-    assert "कर्कट" in text  # this chart's lagna sign, Cancer
+    assert _normalize_extraction_quirks("कर्कट") in text  # this chart's lagna sign, Cancer
     assert "निश्चितता होइन" in text  # disclaimer, in the footer
