@@ -248,15 +248,50 @@ def render_chart_html(stored: dict, language: str) -> str:
     )
 
 
+async def _disclaimer_image_tag(browser, disclaimer: str, font_data_uri: str) -> str:
+    """Chromium's print header/footer templates render in an isolated
+    context that can't load external resources -- confirmed by testing an
+    inline <style>/@font-face block placed directly inside a footer
+    template, which still rendered Devanagari as tofu boxes even though the
+    exact same font/CSS works fine in the main page. <img> tags do work
+    there (a common technique for embedding a logo in a footer), since they
+    don't depend on font loading -- so render the disclaimer to a small PNG
+    with the real font on a throwaway page first, and embed that instead of
+    raw text."""
+    render_html = f"""
+        <!doctype html><html><head><meta charset="utf-8">
+        <style>
+          @font-face {{
+            font-family: 'Noto Sans Devanagari';
+            src: url('{font_data_uri}') format('truetype');
+          }}
+          body {{ margin: 0; padding: 0; }}
+          span {{
+            font-family: 'Noto Sans Devanagari', Arial, sans-serif;
+            font-size: 24px;
+            color: #6b1a24;
+            white-space: nowrap;
+            display: inline-block;
+          }}
+        </style></head>
+        <body><span id="text">{disclaimer}</span></body></html>
+    """
+    render_page = await browser.new_page(device_scale_factor=3)
+    try:
+        await render_page.set_content(render_html, wait_until="load")
+        await render_page.evaluate("document.fonts.ready")
+        element = await render_page.query_selector("#text")
+        png_bytes = await element.screenshot(omit_background=True)
+    finally:
+        await render_page.close()
+
+    data_uri = "data:image/png;base64," + base64.b64encode(png_bytes).decode("ascii")
+    return f'<img src="{data_uri}" style="height:9px; vertical-align:middle;">'
+
+
 async def render_chart_pdf(stored: dict, language: str) -> bytes:
     html = render_chart_html(stored, language)
     disclaimer = FOOTER_DISCLAIMER.get(language, FOOTER_DISCLAIMER["en"])
-    footer_template = f"""
-        <div style="font-size:8px; width:100%; text-align:center; color:#6b1a24;
-                    padding:0 24px; font-family: Arial, sans-serif;">
-          {disclaimer} &middot; <span class="pageNumber"></span>/<span class="totalPages"></span>
-        </div>
-    """
 
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch()
@@ -270,6 +305,21 @@ async def render_chart_pdf(stored: dict, language: str) -> bytes:
             # Devanagari webfont is ready, silently rendering that text
             # blank while everything on a default font still shows.
             await page.evaluate("document.fonts.ready")
+
+            # Plain text is fine for an ASCII disclaimer (Arial covers it);
+            # anything else needs the image workaround above.
+            disclaimer_content = (
+                disclaimer
+                if disclaimer.isascii()
+                else await _disclaimer_image_tag(browser, disclaimer, _font_data_uri())
+            )
+            footer_template = f"""
+                <div style="font-size:8px; width:100%; text-align:center; color:#6b1a24;
+                            padding:0 24px; font-family: Arial, sans-serif;">
+                  {disclaimer_content} &middot; <span class="pageNumber"></span>/<span class="totalPages"></span>
+                </div>
+            """
+
             pdf_bytes = await page.pdf(
                 format="A4",
                 print_background=True,

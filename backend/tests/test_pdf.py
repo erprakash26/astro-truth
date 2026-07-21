@@ -114,7 +114,10 @@ def test_nepali_pdf_is_non_blank_and_contains_expected_text(reference_stored):
     assert "मेष" in text  # lagna sign (Aries), proves Devanagari shaping/extraction works
     assert "कुण्डली चक्र" in text  # chart title
     assert "बृहस्पति" in text  # Jupiter, transits card
-    assert "निश्चितता होइन" in text  # disclaimer, in the footer on every page
+    # The footer disclaimer itself is checked separately in
+    # test_nepali_pdf_footer_disclaimer_is_rendered_as_image_on_every_page --
+    # it's an embedded PNG for Nepali (see render_chart_pdf), not extractable
+    # text, so it can't be asserted on here.
 
     # Same antardasha breakdown, localized: lord names stay in English (as
     # stored in the API data) but the "Antardasha"/"Current" labels localize.
@@ -136,6 +139,42 @@ def test_pdf_has_multiple_pages(reference_stored):
     # Footer disclaimer must repeat on every page, not just the first.
     for page in doc:
         assert "not a science" in page.get_text()
+
+
+def _footer_strip_pixmap(page) -> "pymupdf.Pixmap":
+    # Playwright's footer_template renders inside the PDF's bottom margin
+    # (18mm ~= 51pt at 72dpi); crop generously to that band.
+    rect = page.rect
+    footer_rect = pymupdf.Rect(0, rect.height - 60, rect.width, rect.height)
+    return page.get_pixmap(clip=footer_rect)
+
+
+def test_nepali_pdf_footer_disclaimer_is_rendered_as_image_on_every_page(reference_stored):
+    # Chromium's print header/footer templates render in an isolated context
+    # that can't load external resources at all -- confirmed by testing an
+    # inline <style>/@font-face block placed directly inside a footer
+    # template, which still produced tofu boxes for Devanagari even though
+    # the identical font/CSS works fine in the main page. render_chart_pdf
+    # works around this by rendering the Nepali disclaimer to a PNG with the
+    # real font and embedding it as an <img>, so it's no longer extractable
+    # via get_text() -- verify it lands on every page instead via an
+    # embedded image plus non-blank footer pixels.
+    pdf_bytes = _render(reference_stored, "ne")
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    assert len(doc) >= 1
+    for page in doc:
+        assert len(page.get_images()) > 0  # the disclaimer PNG
+        pixmap = _footer_strip_pixmap(page)
+        assert not all(byte == 255 for byte in pixmap.samples)
+
+
+def test_english_pdf_footer_disclaimer_stays_plain_text(reference_stored):
+    # An ASCII disclaimer doesn't need the image workaround -- Arial covers
+    # it fine -- so the English footer should stay real, extractable text
+    # rather than switching to an image unnecessarily.
+    pdf_bytes = _render(reference_stored, "en")
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    assert len(doc[0].get_images()) == 0
 
 
 def test_pdf_title_falls_back_to_generic_without_name(reference_stored):
@@ -250,4 +289,3 @@ def test_nepali_pdf_for_non_reference_chart_is_non_blank_and_contains_expected_t
     # Chart-grounded interpretation body (from _generate_grounded_mock_text,
     # the non-reference-chart code path) must also be present, not blank.
     assert _normalize_extraction_quirks("कर्कट") in text  # this chart's lagna sign, Cancer
-    assert "निश्चितता होइन" in text  # disclaimer, in the footer
