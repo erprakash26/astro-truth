@@ -1,14 +1,15 @@
 import json
+import logging
 from datetime import date as date_cls
 from datetime import datetime, timezone
 from datetime import time as time_cls
 from typing import Literal
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -27,7 +28,15 @@ from app.storage import load_chart, new_share_id, save_chart
 from app.transits import compute_transits
 from app.ui_translation import translate_ui
 
+logger = logging.getLogger(__name__)
+
 RATE_LIMIT = "10/minute"
+
+# Longest name in app/data/languages.json is 17 chars ("Norwegian Nynorsk");
+# 40 leaves headroom for the "Other" custom-language flow without letting a
+# request pad this into a large, LLM-token-costly or storage-bloating value.
+MAX_LANGUAGE_LENGTH = 40
+MAX_NAME_LENGTH = 100
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -54,7 +63,7 @@ class ChartRequest(BaseModel):
     date: str
     time: str
     city_id: str
-    name: str | None = None
+    name: str | None = Field(None, max_length=MAX_NAME_LENGTH)
 
 
 @app.get("/api/cities")
@@ -68,7 +77,7 @@ def list_languages(q: str = "") -> list[Language]:
 
 
 class TranslateUIRequest(BaseModel):
-    language: str
+    language: str = Field(..., max_length=MAX_LANGUAGE_LENGTH)
 
 
 @app.post("/api/translate-ui")
@@ -76,12 +85,14 @@ class TranslateUIRequest(BaseModel):
 def translate_ui_endpoint(request: Request, payload: TranslateUIRequest) -> dict:
     try:
         return translate_ui(payload.language)
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Could not translate UI: {exc}") from exc
+    except Exception:
+        logger.exception("UI translation failed for language=%r", payload.language)
+        raise HTTPException(status_code=500, detail="Could not translate UI. Please try again.") from None
 
 
 @app.post("/api/chart")
-def create_chart(payload: ChartRequest) -> dict:
+@limiter.limit(RATE_LIMIT)
+def create_chart(request: Request, payload: ChartRequest) -> dict:
     city = get_city(payload.city_id)
     if city is None:
         raise HTTPException(status_code=404, detail=f"Unknown city_id: {payload.city_id}")
@@ -147,7 +158,7 @@ def get_config() -> dict:
 
 class InterpretRequest(BaseModel):
     share_id: str
-    language: str = "en"
+    language: str = Field("en", max_length=MAX_LANGUAGE_LENGTH)
 
 
 def _sse_event(event: str | None, data: dict) -> str:
@@ -183,15 +194,18 @@ def create_interpretation(request: Request, payload: InterpretRequest) -> Stream
 
 @app.get("/api/chart/{share_id}/pdf")
 @limiter.limit(RATE_LIMIT)
-async def get_chart_pdf(request: Request, share_id: str, language: str = "en") -> Response:
+async def get_chart_pdf(
+    request: Request, share_id: str, language: str = Query("en", max_length=MAX_LANGUAGE_LENGTH)
+) -> Response:
     stored = load_chart(share_id)
     if stored is None:
         raise HTTPException(status_code=404, detail=f"Chart not found: {share_id}")
 
     try:
         pdf_bytes = await render_chart_pdf(stored, language)
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Could not generate PDF: {exc}") from exc
+    except Exception:
+        logger.exception("PDF generation failed for share_id=%s", share_id)
+        raise HTTPException(status_code=500, detail="Could not generate PDF. Please try again.") from None
 
     return Response(
         content=pdf_bytes,

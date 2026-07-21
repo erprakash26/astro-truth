@@ -47,3 +47,12 @@ def test_pdf_rate_limit_returns_429_after_limit_exceeded(share_id):
 
     assert statuses.count(200) <= 10
     assert 429 in statuses
+
+
+def test_chart_creation_rate_limit_returns_429_after_limit_exceeded():
+    payload = {"calendar": "AD", "date": "2000-01-01", "time": "12:00", "city_id": "united-kingdom-london"}
+    statuses = [client.post("/api/chart", json=payload).status_code for _ in range(13)]
+
+    assert statuses.count(200) <= 10
+    assert 429 in statuses
+    assert statuses[-1] == 429

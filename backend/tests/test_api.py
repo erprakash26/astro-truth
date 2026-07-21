@@ -208,3 +208,38 @@ def test_create_chart_via_bs_calendar_matches_ad_equivalent(reference_chart_resp
     ad_chart = reference_chart_response["chart"]
     assert bs_chart["lagna_sign_name"] == ad_chart["lagna_sign_name"]
     assert bs_chart["planets"]["Moon"]["nakshatra"] == ad_chart["planets"]["Moon"]["nakshatra"]
+
+
+def test_create_chart_rejects_overlong_name():
+    response = client.post(
+        "/api/chart",
+        json={
+            "calendar": "AD",
+            "date": "2000-01-01",
+            "time": "12:00",
+            "city_id": "united-kingdom-london",
+            "name": "A" * 101,
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_interpret_rejects_overlong_language(reference_chart_response):
+    response = client.post(
+        "/api/interpret",
+        json={"share_id": reference_chart_response["share_id"], "language": "x" * 41},
+    )
+    assert response.status_code == 422
+
+
+def test_translate_ui_rejects_overlong_language():
+    response = client.post("/api/translate-ui", json={"language": "x" * 41})
+    assert response.status_code == 422
+
+
+def test_pdf_rejects_overlong_language(reference_chart_response):
+    response = client.get(
+        f"/api/chart/{reference_chart_response['share_id']}/pdf",
+        params={"language": "x" * 41},
+    )
+    assert response.status_code == 422
