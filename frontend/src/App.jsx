@@ -90,13 +90,19 @@ function App() {
     <div className="flex min-h-screen flex-col bg-cream-100 text-maroon-700">
       <header className="bg-maroon-500 px-4 py-4 shadow-md">
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setResult(null)}
+            className="flex cursor-pointer items-center gap-3 rounded-md text-left transition-opacity hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-300"
+            aria-label={t(lang, 'newChart')}
+            data-testid="logo-home-link"
+          >
             <Logo className="h-9 w-9 shrink-0" />
             <div>
               <h1 className="font-serif text-2xl font-bold text-gold-300">{t(lang, 'appName')}</h1>
               <p className="text-xs text-cream-100/80">{t(lang, 'tagline')}</p>
             </div>
-          </div>
+          </button>
           <LanguageToggle
             mode={langMode}
             otherLanguage={otherLanguage}
@@ -125,7 +131,7 @@ function App() {
         )}
       </main>
 
-      <Footer />
+      <Footer lang={lang} />
     </div>
   )
 }
