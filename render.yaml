@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: astro-truth-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: USE_MOCK_LLM
+        value: "true"
+      - key: ANTHROPIC_API_KEY
+        sync: false

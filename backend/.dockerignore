@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+node_modules/
+.git/
+tests/
+evals/
+*.log
+.env
+.pytest_cache/
+app/data/charts.db
