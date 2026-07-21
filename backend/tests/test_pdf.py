@@ -1,4 +1,5 @@
 import asyncio
+import re
 from datetime import datetime, timezone
 
 import pymupdf
@@ -53,6 +54,20 @@ def _first_page_pixmap_is_blank(pdf_bytes: bytes) -> bool:
 def _extract_text(pdf_bytes: bytes) -> str:
     doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
     return "\n".join(page.get_text() for page in doc)
+
+
+_DEVANAGARI_COMBINING_MARKS = "ऀ-ःऺ-्॑-ॗॢॣ"
+
+
+def _collapse_duplicate_marks(text: str) -> str:
+    """pymupdf's text layer for this Devanagari font sometimes doubles a
+    dependent vowel sign / anusvara on extraction (e.g. "व्याख्या" comes back
+    as "व्यााख्याा") even though the glyph is rendered once -- a known
+    extraction quirk of this font+library combination, not a rendering bug.
+    Collapse runs of a repeated *combining mark* only (not base consonants,
+    which can legitimately repeat, e.g. "निश्चितता") so text assertions
+    aren't coupled to that quirk."""
+    return re.sub(rf"([{_DEVANAGARI_COMBINING_MARKS}])\1+", r"\1", text)
 
 
 def test_english_pdf_is_non_blank_and_contains_expected_text(reference_stored):
@@ -140,3 +155,57 @@ def test_pdf_interpretation_falls_back_for_unsupported_language(reference_stored
     text = _extract_text(_render(reference_stored, "Spanish"))
     assert "requires live mode" in text
     assert "Spanish" in text
+
+
+@pytest.fixture(scope="module")
+def non_reference_stored() -> dict:
+    # A real, non-reference birth chart (Kathmandu, not the Stage-1 London
+    # reference chart). Every test above uses reference_stored, which makes
+    # _is_reference_chart() true and always takes the hand-written _MOCK_TEXT
+    # path -- that hid a real bug (Devanagari text going blank in the PDF)
+    # that only showed up for charts running through _generate_grounded_mock_text.
+    dt_utc = local_time_to_utc(datetime(1990, 6, 15, 8, 30, 0), "Asia/Kathmandu")
+    chart = compute_chart(dt_utc, lat=27.7129, lon=85.3228)
+    moon_longitude = chart.planets["Moon"].longitude
+    dasha_sequence = vimshottari(moon_longitude, dt_utc)
+    now = datetime.now(timezone.utc)
+    current = current_dasha(dasha_sequence, now)
+    transits = compute_transits(chart.lagna_sign, chart.planets["Moon"].sign, now)
+    return {
+        "share_id": "test-non-reference",
+        "name": None,
+        "chart": chart.model_dump(mode="json"),
+        "dasha_timeline": [period.model_dump(mode="json") for period in dasha_sequence],
+        "current_dasha": (
+            {
+                "mahadasha": current[0].model_dump(mode="json"),
+                "antardasha": current[1].model_dump(mode="json"),
+            }
+            if current is not None
+            else None
+        ),
+        "transits": transits.model_dump(mode="json"),
+    }
+
+
+def test_nepali_pdf_for_non_reference_chart_is_non_blank_and_contains_expected_text(
+    non_reference_stored,
+):
+    pdf_bytes = _render(non_reference_stored, "ne")
+    assert pdf_bytes[:4] == b"%PDF"
+
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    text = _collapse_duplicate_marks("\n".join(page.get_text() for page in doc))
+
+    # Static labels (not chart-derived) -- these must never render blank,
+    # regardless of which chart or LLM code path produced the interpretation.
+    assert "कुण्डली चक्र" in text  # chart title
+    assert "लग्न" in text  # "Lagna" heading
+    assert "हालको गोचर" in text  # "Current transits" heading
+    assert "विंशोत्तरी दशा समयरेखा" in text  # dasha timeline heading
+    assert "व्याख्या" in text  # "Interpretation" heading
+
+    # Chart-grounded interpretation body (from _generate_grounded_mock_text,
+    # the non-reference-chart code path) must also be present, not blank.
+    assert "कर्कट" in text  # this chart's lagna sign, Cancer
+    assert "निश्चितता होइन" in text  # disclaimer, in the footer

@@ -263,6 +263,13 @@ async def render_chart_pdf(stored: dict, language: str) -> bytes:
         try:
             page = await browser.new_page()
             await page.set_content(html, wait_until="load")
+            # The "load" event fires once the base64 font data has been
+            # fetched, but not once it has finished parsing/shaping -- on a
+            # slow/CPU-constrained host (observed on Render's free tier,
+            # rarely on a fast dev machine) page.pdf() can run before the
+            # Devanagari webfont is ready, silently rendering that text
+            # blank while everything on a default font still shows.
+            await page.evaluate("document.fonts.ready")
             pdf_bytes = await page.pdf(
                 format="A4",
                 print_background=True,
