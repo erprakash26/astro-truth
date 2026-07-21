@@ -20,10 +20,12 @@ from app.chat import chat_reply
 from app.dasha import current_dasha, vimshottari
 from app.engine import compute_chart, local_time_to_utc
 from app.geocode import City, get_city, search_cities
+from app.languages import Language, search_languages
 from app.interpret import interpret_chart, is_mock_mode
 from app.pdf import render_chart_pdf
 from app.storage import load_chart, new_share_id, save_chart
 from app.transits import compute_transits
+from app.ui_translation import translate_ui
 
 RATE_LIMIT = "10/minute"
 
@@ -57,6 +59,24 @@ class ChartRequest(BaseModel):
 @app.get("/api/cities")
 def list_cities(q: str = "") -> list[City]:
     return search_cities(q)
+
+
+@app.get("/api/languages")
+def list_languages(q: str = "") -> list[Language]:
+    return search_languages(q)
+
+
+class TranslateUIRequest(BaseModel):
+    language: str
+
+
+@app.post("/api/translate-ui")
+@limiter.limit(RATE_LIMIT)
+def translate_ui_endpoint(request: Request, payload: TranslateUIRequest) -> dict:
+    try:
+        return translate_ui(payload.language)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Could not translate UI: {exc}") from exc
 
 
 @app.post("/api/chart")

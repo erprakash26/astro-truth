@@ -8,6 +8,27 @@ export async function searchCities(query) {
   return res.json()
 }
 
+export async function searchLanguages(query) {
+  const url = new URL('/api/languages', BASE_URL)
+  if (query) url.searchParams.set('q', query)
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Failed to search languages: ${res.status}`)
+  return res.json()
+}
+
+export async function translateUI(language) {
+  const res = await fetch(new URL('/api/translate-ui', BASE_URL), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ language }),
+  })
+  if (!res.ok) {
+    const detail = await res.json().catch(() => null)
+    throw new Error(detail?.detail ?? `UI translation request failed: ${res.status}`)
+  }
+  return res.json()
+}
+
 export async function createChart({ calendar, date, time, cityId, name }) {
   const res = await fetch(new URL('/api/chart', BASE_URL), {
     method: 'POST',

@@ -1,10 +1,24 @@
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
-from app import storage
+from app import interpret, storage
 from app.main import app
 
 client = TestClient(app)
+
+
+def _sse_text(body: str) -> str:
+    """Concatenate the "text" field of every `data:` event in an SSE body,
+    mirroring what the frontend's EventSource-style reader reconstructs."""
+    text = ""
+    for block in body.strip().split("\n\n"):
+        for line in block.splitlines():
+            if line.startswith("data: "):
+                payload = json.loads(line[len("data: ") :])
+                text += payload.get("text", "")
+    return text
 
 
 @pytest.fixture(autouse=True)
@@ -29,6 +43,28 @@ def test_list_cities_no_query_returns_results():
     response = client.get("/api/cities")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+
+def test_list_languages_search():
+    response = client.get("/api/languages", params={"q": "span"})
+    assert response.status_code == 200
+    names = [entry["name"] for entry in response.json()]
+    assert "Spanish" in names
+
+
+def test_list_languages_no_query_returns_results():
+    response = client.get("/api/languages")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_translate_ui_mock_mode_returns_unavailable():
+    response = client.post("/api/translate-ui", json={"language": "Spanish"})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["available"] is False
+    assert body["translations"] is None
+    assert "requires live mode" in body["note"]
 
 
 def test_create_chart_unknown_city_returns_404():
@@ -133,6 +169,27 @@ def test_create_chart_with_name_round_trips():
 
     fetched = client.get(f"/api/chart/{body['share_id']}").json()
     assert fetched["name"] == "Priya"
+
+
+def test_interpret_custom_language_falls_back_with_note(reference_chart_response, monkeypatch):
+    # Regression test for a bug where a valid custom language (e.g. the
+    # frontend's "Other" mode with "spanish" typed in) silently produced
+    # English mock text with no indication the request wasn't honored.
+    # Exercises the real /api/interpret SSE endpoint end-to-end, not just
+    # interpret_chart_text() directly, so it also catches a regression in
+    # request parsing or SSE encoding that a unit test on interpret.py alone
+    # would miss.
+    monkeypatch.setattr(interpret.time, "sleep", lambda seconds: None)
+    share_id = reference_chart_response["share_id"]
+
+    response = client.post("/api/interpret", json={"share_id": share_id, "language": "spanish"})
+
+    assert response.status_code == 200
+    text = _sse_text(response.text)
+    assert "requires live mode" in text
+    assert "spanish" in text
+    assert interpret.DISCLAIMER in text
+    assert "## Lagna" not in text  # not the default English interpretation
 
 
 def test_create_chart_via_bs_calendar_matches_ad_equivalent(reference_chart_response):

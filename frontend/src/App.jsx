@@ -1,25 +1,77 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import BirthForm from './components/BirthForm'
 import ResultsPage from './components/ResultsPage'
 import LanguageToggle from './components/LanguageToggle'
 import Logo from './components/Logo'
 import Footer from './components/Footer'
-import { createChart } from './api'
-import { t, validateCustomLanguage } from './i18n'
+import { createChart, translateUI } from './api'
+import { setOtherTranslations, t } from './i18n'
+import { getCachedUITranslation, setCachedUITranslation } from './uiTranslationCache'
 
 function App() {
   const [langMode, setLangMode] = useState('en') // 'en' | 'ne' | 'other'
-  const [customLanguage, setCustomLanguage] = useState('')
+  const [otherLanguage, setOtherLanguage] = useState(null)
+  const [uiTranslationStatus, setUiTranslationStatus] = useState('idle') // idle | loading | ready | unavailable
+  const [uiTranslationNote, setUiTranslationNote] = useState(null)
   const [result, setResult] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
-  // UI chrome (buttons, labels) only ever renders in English or Nepali —
-  // when "Other" is active it stays in English, per the language selector's
-  // contract. Interpretation/PDF content instead uses contentLanguage,
-  // which may be an arbitrary validated string.
-  const lang = langMode === 'other' ? 'en' : langMode
-  const contentLanguage = langMode === 'other' ? (validateCustomLanguage(customLanguage) ?? 'en') : langMode
+  // Fetches (or applies a cached) UI-chrome translation once a custom
+  // "Other" language is confirmed -- i.e. selected from the dropdown, not
+  // on every keystroke while typing. Independent of contentLanguage below,
+  // which drives interpretation/PDF content and keeps working even if this
+  // fails or mock mode is active.
+  useEffect(() => {
+    if (langMode !== 'other' || !otherLanguage) {
+      setUiTranslationStatus('idle')
+      setUiTranslationNote(null)
+      return
+    }
+
+    const cached = getCachedUITranslation(otherLanguage)
+    if (cached) {
+      setOtherTranslations(cached)
+      setUiTranslationStatus('ready')
+      setUiTranslationNote(null)
+      return
+    }
+
+    let cancelled = false
+    setOtherTranslations(null)
+    setUiTranslationStatus('loading')
+    setUiTranslationNote(null)
+
+    translateUI(otherLanguage)
+      .then((res) => {
+        if (cancelled) return
+        if (res.available && res.translations) {
+          setCachedUITranslation(otherLanguage, res.translations)
+          setOtherTranslations(res.translations)
+          setUiTranslationStatus('ready')
+        } else {
+          setUiTranslationStatus('unavailable')
+          setUiTranslationNote(res.note)
+        }
+      })
+      .catch((err) => {
+        if (cancelled) return
+        setUiTranslationStatus('unavailable')
+        setUiTranslationNote(err.message)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [langMode, otherLanguage])
+
+  // UI chrome (buttons, labels) renders in English or Nepali by default; in
+  // "Other" mode it switches to the fetched translation once ready, and
+  // falls back to English while loading, on failure, or in mock mode.
+  // Interpretation/PDF content instead uses contentLanguage, which is
+  // whatever was picked from the dropdown regardless of UI-translation status.
+  const lang = langMode === 'other' ? (uiTranslationStatus === 'ready' ? 'other' : 'en') : langMode
+  const contentLanguage = langMode === 'other' ? (otherLanguage ?? 'en') : langMode
 
   async function handleSubmit(payload) {
     setSubmitting(true)
@@ -47,9 +99,11 @@ function App() {
           </div>
           <LanguageToggle
             mode={langMode}
-            customLanguage={customLanguage}
+            otherLanguage={otherLanguage}
             onModeChange={setLangMode}
-            onCustomLanguageChange={setCustomLanguage}
+            onOtherLanguageChange={setOtherLanguage}
+            uiTranslationStatus={uiTranslationStatus}
+            uiTranslationNote={uiTranslationNote}
           />
         </div>
       </header>

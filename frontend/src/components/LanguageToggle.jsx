@@ -1,8 +1,15 @@
-import { LANGUAGES, t, validateCustomLanguage } from '../i18n'
+import { LANGUAGES, t } from '../i18n'
+import LanguageAutocomplete from './LanguageAutocomplete'
 
-export default function LanguageToggle({ mode, customLanguage, onModeChange, onCustomLanguageChange }) {
+export default function LanguageToggle({
+  mode,
+  otherLanguage,
+  onModeChange,
+  onOtherLanguageChange,
+  uiTranslationStatus,
+  uiTranslationNote,
+}) {
   const isOther = mode === 'other'
-  const showFallbackNotice = isOther && !validateCustomLanguage(customLanguage)
 
   return (
     <div className="flex flex-col items-end gap-1">
@@ -24,17 +31,15 @@ export default function LanguageToggle({ mode, customLanguage, onModeChange, onC
 
       {isOther && (
         <div className="flex flex-col items-end gap-0.5">
-          <input
-            type="text"
-            value={customLanguage}
-            onChange={(e) => onCustomLanguageChange(e.target.value)}
-            placeholder={t('en', 'langOtherPlaceholder')}
-            data-testid="lang-other-input"
-            className="w-40 rounded-md border border-gold-500/50 bg-transparent px-2 py-1 text-xs text-gold-100 placeholder:text-gold-300/60 focus:outline-none focus:ring-1 focus:ring-gold-400"
-          />
-          {showFallbackNotice && (
-            <p className="text-[10px] leading-tight text-gold-200/90" data-testid="lang-other-fallback-notice">
-              {t('en', 'langOtherInvalid')}
+          <LanguageAutocomplete value={otherLanguage} onChange={onOtherLanguageChange} />
+          {uiTranslationStatus === 'loading' && (
+            <p className="text-[10px] leading-tight text-gold-200/90" data-testid="ui-translation-loading">
+              {t('en', 'uiTranslationLoading')}
+            </p>
+          )}
+          {uiTranslationStatus === 'unavailable' && (
+            <p className="text-[10px] leading-tight text-gold-200/90" data-testid="ui-translation-unavailable">
+              {uiTranslationNote || t('en', 'uiTranslationUnavailable')}
             </p>
           )}
         </div>

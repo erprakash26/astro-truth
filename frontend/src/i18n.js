@@ -4,19 +4,6 @@ export const LANGUAGES = {
   other: 'Other',
 }
 
-// Basic sanity check for a free-typed language name: non-empty, letters in
-// any script plus spaces/hyphens/apostrophes only (so "Tamil", "Français",
-// "தமிழ்" all pass), within a reasonable length. Anything else — empty,
-// numbers, symbols — is nonsense we won't forward to the LLM; callers
-// should fall back to English when this returns null.
-const CUSTOM_LANGUAGE_PATTERN = /^[\p{L}\s'-]{2,40}$/u
-
-export function validateCustomLanguage(input) {
-  const trimmed = (input ?? '').trim()
-  if (!CUSTOM_LANGUAGE_PATTERN.test(trimmed)) return null
-  return trimmed
-}
-
 const DICT = {
   en: {
     appName: 'AstroTruth',
@@ -57,6 +44,7 @@ const DICT = {
     errorCity: 'Please choose a city from the list.',
     errorGeneric: 'Something went wrong. Please try again.',
     noCityResults: 'No matching cities',
+    noLanguageResults: 'No matching languages',
     interpret: 'Interpret my chart',
     interpreting: 'Interpreting…',
     mockBadge: 'mock',
@@ -69,8 +57,9 @@ const DICT = {
     downloadingPdf: 'Generating PDF…',
     downloadError: 'Could not generate the PDF. Please try again.',
     langOther: 'Other',
-    langOtherPlaceholder: 'Type a language, e.g. Spanish',
-    langOtherInvalid: 'Could not recognize that language — falling back to English.',
+    langOtherPlaceholder: 'Search for a language…',
+    uiTranslationLoading: 'Translating menu…',
+    uiTranslationUnavailable: 'UI translation requires live mode — showing English menus.',
     chatTitle: 'Ask about your chart',
     chatMockNote: 'Mock mode only understands a few question patterns — try one of the examples below. Full conversational chat requires live mode.',
     chatPlaceholder: 'Ask a question about your chart…',
@@ -118,6 +107,7 @@ const DICT = {
     errorCity: 'कृपया सूचीबाट शहर छान्नुहोस्।',
     errorGeneric: 'केही समस्या भयो। फेरि प्रयास गर्नुहोस्।',
     noCityResults: 'कुनै शहर फेला परेन',
+    noLanguageResults: 'कुनै भाषा फेला परेन',
     interpret: 'मेरो कुण्डली व्याख्या गर्नुहोस्',
     interpreting: 'व्याख्या गर्दै…',
     mockBadge: 'नमूना',
@@ -130,8 +120,9 @@ const DICT = {
     downloadingPdf: 'PDF तयार गर्दै…',
     downloadError: 'PDF तयार गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
     langOther: 'Other',
-    langOtherPlaceholder: 'Type a language, e.g. Spanish',
-    langOtherInvalid: 'Could not recognize that language — falling back to English.',
+    langOtherPlaceholder: 'Search for a language…',
+    uiTranslationLoading: 'Translating menu…',
+    uiTranslationUnavailable: 'UI translation requires live mode — showing English menus.',
     chatTitle: 'आफ्नो कुण्डलीबारे सोध्नुहोस्',
     // The mock-mode pattern matcher only understands English question
     // shapes, so its note and examples stay English regardless of UI
@@ -143,6 +134,16 @@ const DICT = {
     chatSending: 'पठाउँदै…',
     chatError: 'जवाफ प्राप्त गर्न सकिएन। फेरि प्रयास गर्नुहोस्।',
   },
+  // Populated at runtime by setOtherTranslations() once a custom "Other"
+  // language's UI translation has been fetched from POST /api/translate-ui.
+  // Empty until then, so t('other', key) transparently falls back to the
+  // English source strings via the DICT.en fallback below -- callers don't
+  // need to know whether a translation has loaded yet.
+  other: {},
+}
+
+export function setOtherTranslations(translations) {
+  DICT.other = translations ?? {}
 }
 
 export function t(lang, key) {
