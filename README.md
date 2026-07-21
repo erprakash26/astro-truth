@@ -25,8 +25,12 @@ uvicorn app.main:app --reload
 
 ```
 cd frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
+
+`VITE_API_URL` in `.env` defaults to `http://localhost:8000`; point it at a
+different backend if needed.
 
 See `CLAUDE.md` for project conventions.
