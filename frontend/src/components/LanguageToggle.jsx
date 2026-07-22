@@ -30,21 +30,15 @@ export default function LanguageToggle({
       </div>
 
       {isOther && (
-        <div className="flex flex-col items-end gap-1.5">
+        <div className="flex flex-col items-end gap-0.5">
           <LanguageAutocomplete value={otherLanguage} onChange={onOtherLanguageChange} />
           {uiTranslationStatus === 'loading' && (
-            <p
-              className="max-w-[85vw] rounded-md border border-gold-500/40 bg-maroon-700/60 px-2.5 py-1.5 text-xs leading-relaxed text-cream-100 sm:max-w-xs"
-              data-testid="ui-translation-loading"
-            >
+            <p className="text-[10px] leading-tight text-cream-100/90" data-testid="ui-translation-loading">
               {t('en', 'uiTranslationLoading')}
             </p>
           )}
           {uiTranslationStatus === 'unavailable' && (
-            <p
-              className="max-w-[85vw] rounded-md border border-gold-500/40 bg-maroon-700/60 px-2.5 py-1.5 text-xs leading-relaxed text-cream-100 sm:max-w-xs"
-              data-testid="ui-translation-unavailable"
-            >
+            <p className="text-[10px] leading-tight text-cream-100/90" data-testid="ui-translation-unavailable">
               {uiTranslationNote || t('en', 'uiTranslationUnavailable')}
             </p>
           )}
