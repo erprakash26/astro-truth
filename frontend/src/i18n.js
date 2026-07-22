@@ -188,11 +188,18 @@ export const HOUSE_ORDINALS = {
   ],
 }
 
-// Always shown together, regardless of the selected UI language — the
-// footer disclaimer is bilingual on every page, not language-toggled.
+// Matches the selected UI language (English toggle -> English, Nepali
+// toggle -> Nepali); "Other" custom languages fall back to English, same
+// as UI chrome without a live translation.
 export const FOOTER_DISCLAIMER = {
   en: 'Astrology is a traditional belief system, not a science. It describes tendencies, not certainties.',
   ne: 'ज्योतिषशास्त्र एक परम्परागत विश्वास प्रणाली हो, विज्ञान होइन। यसले निश्चितता होइन, प्रवृत्तिहरू मात्र वर्णन गर्छ।',
+}
+
+// Same language-matching behavior as FOOTER_DISCLAIMER above.
+export const FOOTER_BETA_NOTICE = {
+  en: "This project is still being improved and may contain mistakes — please don't rely on it for important decisions.",
+  ne: 'यो प्रोजेक्ट अझै सुधारिँदै छ र यसमा त्रुटिहरू हुन सक्छन्। कृपया महत्त्वपूर्ण निर्णयका लागि यसमा भर नपर्नुहोस्।',
 }
 
 export const SIGN_NAMES = {

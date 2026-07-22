@@ -1,6 +1,6 @@
 import asyncio
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pymupdf
 import pytest
@@ -175,6 +175,41 @@ def test_english_pdf_footer_disclaimer_stays_plain_text(reference_stored):
     pdf_bytes = _render(reference_stored, "en")
     doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
     assert len(doc[0].get_images()) == 0
+
+
+def test_pdf_footer_copyright_line_uses_current_year_on_every_page(reference_stored):
+    # The copyright year must be computed at render time (date.today().year
+    # in render_chart_pdf), not hardcoded, so this stays correct without a
+    # code change every January.
+    pdf_bytes = _render(reference_stored, "en")
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    assert len(doc) >= 1
+    expected = f"© {date.today().year} AstroTruth."
+    for page in doc:
+        assert expected in page.get_text()
+
+
+def test_english_pdf_footer_beta_notice_on_every_page(reference_stored):
+    pdf_bytes = _render(reference_stored, "en")
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    assert len(doc) >= 1
+    expected = "still being improved and may contain mistakes"
+    for page in doc:
+        assert expected in page.get_text()
+
+
+def test_nepali_pdf_footer_has_disclaimer_and_beta_notice_images_on_every_page(reference_stored):
+    # Both the disclaimer and the beta notice need the Devanagari-font image
+    # workaround in Nepali (same reasoning as
+    # test_nepali_pdf_footer_disclaimer_is_rendered_as_image_on_every_page)
+    # -- confirm both actually render as separate images, not just one.
+    pdf_bytes = _render(reference_stored, "ne")
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    assert len(doc) >= 1
+    for page in doc:
+        assert len(page.get_images()) >= 2  # disclaimer PNG + beta notice PNG
+        pixmap = _footer_strip_pixmap(page)
+        assert not all(byte == 255 for byte in pixmap.samples)
 
 
 def test_pdf_title_falls_back_to_generic_without_name(reference_stored):

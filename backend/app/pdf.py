@@ -10,6 +10,7 @@ truth (no separate PDF-only layout to maintain).
 from __future__ import annotations
 
 import base64
+from datetime import date
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -52,6 +53,19 @@ FOOTER_DISCLAIMER = {
     "ne": (
         "ज्योतिषशास्त्र एक परम्परागत विश्वास प्रणाली हो, विज्ञान होइन। "
         "यसले निश्चितता होइन, प्रवृत्तिहरू मात्र वर्णन गर्छ।"
+    ),
+}
+
+# Same language-matching behavior as FOOTER_DISCLAIMER: falls back to
+# English for any language without a hand-translated entry.
+FOOTER_BETA_NOTICE = {
+    "en": (
+        "This project is still being improved and may contain mistakes — "
+        "please don't rely on it for important decisions."
+    ),
+    "ne": (
+        "यो प्रोजेक्ट अझै सुधारिँदै छ र यसमा त्रुटिहरू हुन सक्छन्। "
+        "कृपया महत्त्वपूर्ण निर्णयका लागि यसमा भर नपर्नुहोस्।"
     ),
 }
 
@@ -248,16 +262,32 @@ def render_chart_html(stored: dict, language: str) -> str:
     )
 
 
-async def _disclaimer_image_tag(browser, disclaimer: str, font_data_uri: str) -> str:
+def _needs_font_image(text: str) -> bool:
+    """True if `text` contains a character Arial (the footer's plain-text
+    font) can't render, e.g. Devanagari. Plain ASCII always passes, but so
+    does common Latin-script typographic punctuation outside the ASCII
+    range (em dash, curly quotes, ...) that Arial covers fine -- checking
+    strict .isascii() would wrongly route English text containing an em
+    dash through the image workaround below. cp1252 covers exactly that
+    Latin-plus-typographic-punctuation range."""
+    try:
+        text.encode("cp1252")
+        return False
+    except UnicodeEncodeError:
+        return True
+
+
+async def _footer_text_image_tag(browser, text: str, font_data_uri: str, height_px: int) -> str:
     """Chromium's print header/footer templates render in an isolated
     context that can't load external resources -- confirmed by testing an
     inline <style>/@font-face block placed directly inside a footer
     template, which still rendered Devanagari as tofu boxes even though the
     exact same font/CSS works fine in the main page. <img> tags do work
     there (a common technique for embedding a logo in a footer), since they
-    don't depend on font loading -- so render the disclaimer to a small PNG
-    with the real font on a throwaway page first, and embed that instead of
-    raw text."""
+    don't depend on font loading -- so render the given footer line to a
+    small PNG with the real font on a throwaway page first, and embed that
+    instead of raw text. Used for both the disclaimer and the beta notice
+    when the current language needs the Devanagari font."""
     render_html = f"""
         <!doctype html><html><head><meta charset="utf-8">
         <style>
@@ -274,7 +304,7 @@ async def _disclaimer_image_tag(browser, disclaimer: str, font_data_uri: str) ->
             display: inline-block;
           }}
         </style></head>
-        <body><span id="text">{disclaimer}</span></body></html>
+        <body><span id="text">{text}</span></body></html>
     """
     render_page = await browser.new_page(device_scale_factor=3)
     try:
@@ -286,12 +316,13 @@ async def _disclaimer_image_tag(browser, disclaimer: str, font_data_uri: str) ->
         await render_page.close()
 
     data_uri = "data:image/png;base64," + base64.b64encode(png_bytes).decode("ascii")
-    return f'<img src="{data_uri}" style="height:9px; vertical-align:middle;">'
+    return f'<img src="{data_uri}" style="height:{height_px}px; vertical-align:middle;">'
 
 
 async def render_chart_pdf(stored: dict, language: str) -> bytes:
     html = render_chart_html(stored, language)
     disclaimer = FOOTER_DISCLAIMER.get(language, FOOTER_DISCLAIMER["en"])
+    beta_notice = FOOTER_BETA_NOTICE.get(language, FOOTER_BETA_NOTICE["en"])
 
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch()
@@ -306,17 +337,34 @@ async def render_chart_pdf(stored: dict, language: str) -> bytes:
             # blank while everything on a default font still shows.
             await page.evaluate("document.fonts.ready")
 
-            # Plain text is fine for an ASCII disclaimer (Arial covers it);
-            # anything else needs the image workaround above.
+            # Plain text is fine for anything Arial can render; anything
+            # else needs the image workaround above. Disclaimer and notice
+            # sizes (9px / 8px) mirror the font-size hierarchy of the
+            # surrounding plain-text divs below (8px / 7px) as closely as an
+            # image can.
+            font_data_uri = _font_data_uri()
             disclaimer_content = (
-                disclaimer
-                if disclaimer.isascii()
-                else await _disclaimer_image_tag(browser, disclaimer, _font_data_uri())
+                await _footer_text_image_tag(browser, disclaimer, font_data_uri, height_px=9)
+                if _needs_font_image(disclaimer)
+                else disclaimer
             )
+            beta_notice_content = (
+                await _footer_text_image_tag(browser, beta_notice, font_data_uri, height_px=8)
+                if _needs_font_image(beta_notice)
+                else beta_notice
+            )
+            copyright_year = date.today().year
             footer_template = f"""
-                <div style="font-size:8px; width:100%; text-align:center; color:#6b1a24;
-                            padding:0 24px; font-family: Arial, sans-serif;">
-                  {disclaimer_content} &middot; <span class="pageNumber"></span>/<span class="totalPages"></span>
+                <div style="width:100%; text-align:center; padding:0 24px; font-family: Arial, sans-serif;">
+                  <div style="font-size:8px; color:#6b1a24;">
+                    {disclaimer_content} &middot; <span class="pageNumber"></span>/<span class="totalPages"></span>
+                  </div>
+                  <div style="font-size:7px; color:#6b1a24; opacity:0.75; margin-top:1px;">
+                    {beta_notice_content}
+                  </div>
+                  <div style="font-size:6px; color:#6b1a24; opacity:0.55; margin-top:1px;">
+                    &copy; {copyright_year} AstroTruth.
+                  </div>
                 </div>
             """
 
